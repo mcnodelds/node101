@@ -1,0 +1,4 @@
+<%= it.name %>
+<%= it.role %>
+<%= it.gh %>
+<%= it.description %>

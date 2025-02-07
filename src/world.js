@@ -1,6 +1,6 @@
 /**
  * Greats the world the way it should be...
- * @returns string hello? ні
+ * @returns {string} hello? ні
  */
 function hello() {
     const payload = "Hello, cruel World...";
