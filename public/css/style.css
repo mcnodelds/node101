@@ -1,0 +1,87 @@
+:root {
+    --m-bg-color: #131313;
+    --m-fg-color: #FDF4F7;
+    --m-fg-accent-color: #C20004;
+    --m-aux-color: #A8092D;
+}
+
+
+@font-face {
+    font-family: "Grenze Gotisch";
+    src: url(/fonts/GrenzeGotisch-VariableFont_wght.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+
+}
+
+
+body {
+    font-family: "Grenze Gotisch";
+    background-color: var(--m-bg-color);
+    color: var(--m-fg-color);
+    min-height: 100vh;
+}
+
+.accent {
+    color: var(--m-fg-accent-color);
+}
+
+.devteam-container {
+    max-width: 600px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin: auto;
+}
+
+.devteam-member {
+    display: flex;
+    flex-direction: row;
+    text-align: left;
+}
+
+.devteam-member:nth-child(even) {
+    flex-direction: row-reverse;
+    text-align: right;
+}
+
+.devteam-avatar {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    position: relative;
+    z-index: 4;
+    transition: transform 0.3s ease;
+}
+
+.devteam-avatar:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--m-aux-color);
+    z-index: 2;
+}
+
+.devteam-avatar:hover {
+    transform: translate(-10px, -10px);
+}
+
+.devteam-member-name a {
+    text-decoration: inherit;
+    color: inherit;
+}
+
+.devteam-member-info {
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    flex: 1
+}

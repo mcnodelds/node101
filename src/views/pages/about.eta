@@ -1,6 +1,8 @@
 <% layout("/layouts/base", { title: "About (s)us"}) %>
-<div>
+<div class="devteam-container">
     <% it.devteam.forEach((dev) => { %>
-    <%~ include("/partials/about/dev", dev); %>
+        <div class="devteam-member">
+            <%~ include("/partials/about/dev", dev); %>
+        </div>
     <% }); %>
 </div>

@@ -1,4 +1,14 @@
-<%= it.name %>
-<%= it.role %>
-<%= it.gh %>
-<%= it.description %>
+<img src="<%= 'https://github.com/' + it.gh + '.png' %>" class="devteam-avatar" />
+<div class="devteam-member-info">
+    <div class="devteam-member-name">
+        <a href="<%= 'https://github.com/' + it.gh %>">
+            <%= it.name %>
+        </a>
+    </div>
+    <div class="devteam-member-role">
+        <%= it.role %>
+    </div>
+    <div class="devteam-member-desc">
+        <%= it.description %>
+    </div>
+</div>
