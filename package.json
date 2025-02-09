@@ -28,8 +28,9 @@
     },
     "dependencies": {
         "eta": "^3.5.0",
-        "express": "^4.21.2"
+        "express": "^4.21.2"    
     },
+    "packageManager": "pnpm@10.2.0",
     "prettier": {
         "trailingComma": "es5",
         "tabWidth": 4,
