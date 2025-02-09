@@ -2,7 +2,6 @@
     "compilerOptions": {
         "target": "ES6",
         "module": "NodeNext",
-        "allowJs": true,
         "checkJs": true,
         "esModuleInterop": true,
         "moduleResolution": "NodeNext",
