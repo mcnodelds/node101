@@ -64,7 +64,7 @@ app.get("/about", (_req, res) => {
                 role: "dunno",
                 gh: "longvodyneste",
                 description: "dunno",
-            }
+            },
         ],
     });
 });
