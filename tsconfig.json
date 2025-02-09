@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
         "target": "ES6",
-        "module": "ESNext",
+        "module": "NodeNext",
         "allowJs": true,
         "checkJs": true,
         "esModuleInterop": true,
-        "moduleResolution": "nodenext",
+        "moduleResolution": "NodeNext",
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "strict": true
