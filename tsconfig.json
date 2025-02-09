@@ -3,11 +3,17 @@
         "target": "ES6",
         "module": "NodeNext",
         "checkJs": true,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "outDir": "dist",
+        "declarationMap": true,
         "esModuleInterop": true,
         "moduleResolution": "NodeNext",
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "strict": true
     },
-    "include": ["src/**/*"]
+    "include": [
+        "src/**/*"
+    ]
 }
