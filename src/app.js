@@ -42,9 +42,9 @@ app.get("/about", (_req, res) => {
         devteam: [
             {
                 name: "Vladyslav Nosylevskyi",
-                role: "dunno",
+                role: "Dungeon Master",
                 gh: "wvlab",
-                description: "dunno",
+                description: "Have i said before that i f:banish:ucking love elixir?",
             },
             // TODO: add all members
             {
