@@ -31,6 +31,7 @@ app.use(express.static(path.join(import.meta.dirname, "../public")));
  *     name: string,
  *     role: string,
  *     gh: string,
+ *     pfplink?: string,
  *     description: string
  * }} Developer
  */
