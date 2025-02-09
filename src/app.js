@@ -3,7 +3,7 @@ import { Eta } from "eta";
 import { hello } from "./world.js";
 import path from "path";
 
-const port = process.env.MCNODADS_PORT || 3000;
+const port = process.env.MCNODADS_PORT || 3001;
 
 const app = express();
 
