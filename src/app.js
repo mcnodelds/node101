@@ -1,15 +1,10 @@
 import express from "express";
 import { Eta } from "eta";
-import { hello } from "./world.js";
 import path from "path";
 
-const port = process.env.MCNODADS_PORT || 3000;
-
+const port = process.env.PORT || 3000;
 const app = express();
-
-const eta = new Eta({
-    views: path.join(import.meta.dirname, "views"),
-});
+const eta = new Eta({ views: path.join(import.meta.dirname, "views") });
 
 app.engine("eta", (path, opts, callback) => {
     try {
@@ -23,8 +18,15 @@ app.engine("eta", (path, opts, callback) => {
 
 app.set("view engine", "eta");
 app.set("views", path.join(import.meta.dirname, "views"));
-
 app.use(express.static(path.join(import.meta.dirname, "../public")));
+
+app.get("/index", (_req, res) => {
+    res.render("pages/index", { deadline: "2025-12-31T23:59:59" });
+});
+
+app.get("/index/about", (_req, res) => {
+    res.redirect("/about");
+});
 
 /**
  * @typedef {{
@@ -36,9 +38,16 @@ app.use(express.static(path.join(import.meta.dirname, "../public")));
  * }} Developer
  */
 
+app.get("/index", (_req, res) => {
+    res.render("pages/index", { deadline: "2025-12-31T23:59:59" });
+});
+
+app.get("/index/about", (_req, res) => {
+    res.redirect("/about");
+});
+
 app.get("/about", (_req, res) => {
     res.render("pages/about", {
-        /** @type {Developer[]} */
         devteam: [
             {
                 name: "Vladyslav Nosylevskyi",
@@ -46,7 +55,6 @@ app.get("/about", (_req, res) => {
                 gh: "wvlab",
                 description: "dunno",
             },
-            // TODO: add all members
             {
                 name: "Vadym Rybytskyi",
                 role: "dunno",
@@ -72,7 +80,9 @@ app.get("/about", (_req, res) => {
 });
 
 app.get("/", (_req, res) => {
-    res.render("/index", { hehe: hello() });
+    res.redirect("/index");
 });
 
-app.listen(port);
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}/`);
+});

@@ -1,2 +1,97 @@
-<% layout("/layouts/base") %>
-<%= hehe %>
+<% layout("/layouts/base", { title: "Скоро буде" }) %>
+
+<style>
+    body {
+        background-color: #300303;
+        color: white;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+
+    h1 {
+        font-size: 3rem;
+        margin-top: 20vh;
+    }
+
+    #countdown {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+        font-size: 2rem;
+    }
+
+    .countdown-box {
+        background-color: #600606;
+        padding: 20px;
+        border-radius: 10px;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    .countdown-box span {
+        display: block;
+        font-size: 1rem;
+        margin-top: 5px;
+        color: #ffcccc;
+    }
+
+    .btn {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 15px 30px;
+        background-color: #900909;
+        color: white;
+        text-decoration: none;
+        font-size: 1.5rem;
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+
+    .btn:hover {
+        background-color: #b01010;
+    }
+</style>
+
+<h1>САЙТ СКОРО БУДЕ, ЧЕСНО</h1>
+<div id="countdown">
+    <div class="countdown-box">
+        <div id="days">00</div>
+        <span>днів</span>
+    </div>
+    <div class="countdown-box">
+        <div id="hours">00</div>
+        <span>годин</span>
+    </div>
+    <div class="countdown-box">
+        <div id="minutes">00</div>
+        <span>хвилин</span>
+    </div>
+    <div class="countdown-box">
+        <div id="seconds">00</div>
+        <span>секунд</span>
+    </div>
+</div>
+
+<a href="/index/about" class="btn">Перейти на About</a>
+
+<script>
+    function updateCountdown() {
+        const deadline = new Date("<%= it.deadline %>").getTime();
+        const now = new Date().getTime();
+        const timeLeft = deadline - now;
+
+        if (timeLeft < 0) {
+            document.getElementById("countdown").innerHTML = "А всьо";
+            return;
+        }
+
+        document.getElementById("days").innerText = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        document.getElementById("hours").innerText = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        document.getElementById("minutes").innerText = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        document.getElementById("seconds").innerText = Math.floor((timeLeft % (1000 * 60)) / 1000);
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+</script>
