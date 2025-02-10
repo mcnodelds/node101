@@ -1,7 +1,7 @@
-<img src="<%= 'https://github.com/' + it.gh + '.png' %>" class="devteam-avatar" />
+<img src="<%= it.pfplink ? it.pfplink : 'https://github.com/'.concat(it.gh).concat(".png") %>" class="devteam-avatar" />
 <div class="devteam-member-info">
     <div class="devteam-member-name">
-        <a href="<%= 'https://github.com/' + it.gh %>">
+        <a href="<%= "https://github.com/".concat(it.gh) %>">
             <%= it.name %>
         </a>
     </div>
