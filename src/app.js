@@ -20,12 +20,8 @@ app.set("view engine", "eta");
 app.set("views", path.join(import.meta.dirname, "views"));
 app.use(express.static(path.join(import.meta.dirname, "../public")));
 
-app.get("/index", (_req, res) => {
+app.get("/", (_req, res) => {
     res.render("pages/index", { deadline: "2025-12-31T23:59:59" });
-});
-
-app.get("/index/about", (_req, res) => {
-    res.redirect("/about");
 });
 
 /**
@@ -37,14 +33,6 @@ app.get("/index/about", (_req, res) => {
  *     description: string
  * }} Developer
  */
-
-app.get("/index", (_req, res) => {
-    res.render("pages/index", { deadline: "2025-12-31T23:59:59" });
-});
-
-app.get("/index/about", (_req, res) => {
-    res.redirect("/about");
-});
 
 app.get("/about", (_req, res) => {
     res.render("pages/about", {
@@ -77,10 +65,6 @@ app.get("/about", (_req, res) => {
             },
         ],
     });
-});
-
-app.get("/", (_req, res) => {
-    res.redirect("/index");
 });
 
 app.listen(port, () => {
