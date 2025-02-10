@@ -8,9 +8,13 @@
         font-family: Arial, sans-serif;
     }
 
-    h1 {
-        font-size: 3rem;
-        margin-top: 20vh;
+    .countdown-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: 100vh;
     }
 
     #countdown {
@@ -53,6 +57,7 @@
     }
 </style>
 
+<div class="countdown-container">
 <h1>САЙТ СКОРО БУДЕ, ЧЕСНО</h1>
 <div id="countdown">
     <div class="countdown-box">
@@ -74,6 +79,8 @@
 </div>
 
 <a href="/index/about" class="btn">Перейти на About</a>
+
+</div>
 
 <script>
     function updateCountdown() {
