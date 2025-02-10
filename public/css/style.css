@@ -106,3 +106,55 @@ body {
 .devteam-member:nth-child(even) .devteam-member-info {
     align-items: flex-end;
 }
+
+.countdown-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+}
+
+#countdown {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    font-size: 2rem;
+}
+
+.countdown-box {
+    background-color: #600606;
+    padding: 20px;
+    border-radius: 10px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.countdown-box span {
+    display: block;
+    font-size: 1rem;
+    margin-top: 5px;
+    color: #ffcccc;
+}
+
+.countdown-box div {
+    font-family: "Grenze Gotisch", serif;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 15px 30px;
+    background-color: #900909;
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background-color: #b01010;
+}
