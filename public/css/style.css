@@ -8,18 +8,21 @@
 
 @font-face {
     font-family: "Grenze Gotisch";
-    src: url(/fonts/GrenzeGotisch-VariableFont_wght.ttf) format('truetype');
+    src: url(/fonts/GrenzeGotisch.ttf) format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
-
+    font-family: "Alegreya";
+    src: url(/fonts/Alegreya.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 
 body {
-    font-family: "Grenze Gotisch";
+    font-family: "Grenze Gotisch", serif;
     background-color: var(--m-bg-color);
     color: var(--m-fg-color);
     min-height: 100vh;
