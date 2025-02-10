@@ -19,8 +19,15 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: "Alegreya Sans";
+    src: url(/fonts/AlegreyaSans.ttf) format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
-    font-family: "Grenze Gotisch", serif;
+    font-family: "Alegreya Sans", sans-serif;
     background-color: var(--m-bg-color);
     color: var(--m-fg-color);
     min-height: 100vh;
