@@ -55,9 +55,10 @@ app.get("/about", (_req, res) => {
             },
             {
                 name: "Anastasiia Prokopchuk",
-                role: "dunno",
+                role: "HR & Backend",
                 gh: "Pr-Anastasiia",
-                description: "dunno",
+                description:
+                    "-. . / .-- .. .-. ..-- / .-- / ..-.. -.. .. -. --- .-. --- --. .. .--",
             },
             {
                 name: "Bantik",
