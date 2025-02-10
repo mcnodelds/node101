@@ -1,65 +1,11 @@
 <% layout("/layouts/base", { title: "Про нас" }) %>
 
-<style>
-    body {
-        background-color: #300303;
-        color: white;
-        text-align: center;
-        font-family: Arial, sans-serif;
-    }
+<h1 align="center">Наша команда</h1>
 
-    .team-container {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        margin-top: 15vh;
-    }
-
-    .team-member {
-        text-align: center;
-        cursor: pointer;
-    }
-
-    .avatar {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-
-    .name {
-        margin-top: 10px;
-        font-size: 1.5rem;
-        text-decoration: underline;
-    }
-
-    .description {
-        display: none;
-        margin-top: 5px;
-        font-size: 1rem;
-        color: #ffcccc;
-    }
-</style>
-
-<h1>Наша команда</h1>
-
-<div class="team-container">
-    <% it.devteam.forEach(member => { %>
-        <div class="team-member" onclick="toggleDescription('<%= member.gh %>')">
-            <img class="avatar" src="https://github.com/<%= member.gh %>.png" alt="<%= member.name %>">
-            <div class="name"><%= member.name %></div>
-            <div id="desc-<%= member.gh %>" class="description">
-                <strong>Роль:</strong> <%= member.role %> <br>
-                <strong>GitHub:</strong> <a href="https://github.com/<%= member.gh %>" target="_blank">@<%= member.gh %></a> <br>
-                <strong>Опис:</strong> <%= member.description %>
-            </div>
+<div class="devteam-container">
+    <% it.devteam.forEach((dev) => { %>
+        <div class="devteam-member">
+            <%~ include("/partials/about/dev", dev); %>
         </div>
     <% }); %>
 </div>
-
-<script>
-    function toggleDescription(id) {
-        let desc = document.getElementById("desc-" + id);
-        desc.style.display = desc.style.display === "block" ? "none" : "block";
-    }
-</script>
