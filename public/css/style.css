@@ -1,25 +1,23 @@
 :root {
     --m-bg-color: #131313;
-    --m-fg-color: #FDF4F7;
-    --m-fg-accent-color: #C20004;
-    --m-aux-color: #A8092D;
+    --m-fg-color: #fdf4f7;
+    --m-fg-accent-color: #c20004;
+    --m-aux-color: #a8092d;
 }
-
 
 @font-face {
     font-family: "Grenze Gotisch";
-    src: url(/fonts/GrenzeGotisch.ttf) format('truetype');
+    src: url(/fonts/GrenzeGotisch.ttf) format("truetype");
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: "Alegreya";
-    src: url(/fonts/Alegreya.ttf) format('truetype');
+    src: url(/fonts/Alegreya.ttf) format("truetype");
     font-weight: normal;
     font-style: normal;
 }
-
 
 body {
     font-family: "Grenze Gotisch", serif;
@@ -33,7 +31,10 @@ body {
 }
 
 .devteam-container {
-    max-width: 600px;
+    --devteam-width: 600px;
+    --devteam-avatar-width: 100px;
+    --devteam-info-padding: 25px;
+    max-width: var(--devteam-width);
     padding: 30px;
     display: flex;
     flex-direction: column;
@@ -53,23 +54,12 @@ body {
 }
 
 .devteam-avatar {
-    width: 100px;
-    height: 100px;
+    width: var(--devteam-avatar-width);
+    height: var(--devteam-avatar-width);
     object-fit: cover;
     position: relative;
     z-index: 4;
     transition: transform 0.3s ease;
-}
-
-.devteam-avatar:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--m-aux-color);
-    z-index: 2;
 }
 
 .devteam-avatar:hover {
@@ -81,10 +71,27 @@ body {
     color: inherit;
 }
 
+.devteam-member-role {
+    font-family: "Alegreya", serif;
+}
+
+.devteam-member-desc {
+    text-align: justify;
+}
+
 .devteam-member-info {
-    padding-left: 25px;
-    padding-right: 25px;
+    display: inline-flex;
+    flex-direction: column;
+    max-width: calc(
+        var(--devteam-width) -
+            (2 * (var(--devteam-avatar-width) + var(--devteam-info-padding)))
+    );
+    padding-left: var(--devteam-info-padding);
+    padding-right: var(--devteam-info-padding);
     padding-top: 5px;
     padding-bottom: 5px;
-    flex: 1
+}
+
+.devteam-member:nth-child(even) .devteam-member-info {
+    align-items: flex-end;
 }
