@@ -59,7 +59,7 @@ app.get("/about", (_req, res) => {
                     "-. . / .-- .. .-. ..-- / .-- / ..-.. -.. .. -. --- .-. --- --. .. .--",
             },
             {
-                name: "Bantik",
+                name: "Dmytro Statkevych",
                 role: "qa & back",
                 gh: "longvodyneste",
                 description:
