@@ -38,7 +38,7 @@ body {
 }
 
 .devteam-container {
-    --devteam-width: 600px;
+    --devteam-width: 750px;
     --devteam-avatar-width: 100px;
     --devteam-info-padding: 25px;
     max-width: var(--devteam-width);
@@ -85,6 +85,7 @@ body {
 }
 
 .devteam-member-desc {
+    padding-top: 5px;
     text-align: justify;
 }
 
