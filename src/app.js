@@ -39,9 +39,10 @@ app.get("/about", (_req, res) => {
         devteam: [
             {
                 name: "Vladyslav Nosylevskyi",
-                role: "dunno",
+                role: "Lead Backend & DevOps (oops)",
                 gh: "wvlab",
-                description: "dunno",
+                description:
+                    "Dans les salles des arts numériques demeure un curieux artisan nommé wvlab, qui œuvre dans les arts anciens des murmures mécaniques et de l'alchimie computationnelle. Son instrument de prédilection est le mystique Elixir, avec lequel il tisse les fils mêmes du silicium et de la logique. Tel un maître artisan d'antan, il façonne son ouvrage aux plus profonds niveaux du métier, parlant directement aux cœurs métalliques des machines. Sa connaissance coule profonde comme un ruisseau de montagne, transformant l'instruction brute en création artistique, tout comme les anciens maîtres transformaient le métal vil en or précieux.",
             },
             {
                 name: "Vadym Rybytskyi",
