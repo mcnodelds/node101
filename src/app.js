@@ -45,9 +45,10 @@ app.get("/about", (_req, res) => {
             },
             {
                 name: "Vadym Rybytskyi",
-                role: "dunno",
+                role: "Deputy for seriousness and corruption, Front End, Back Beninging",
                 gh: "dfc5fe",
-                description: "dunno",
+                description:
+                    "If you have any question, you can ask it to me for a 30-hour monologue that won't answer your question, but I'll seem serious as hell. Actually, this explains a lot - almost no one saw me, but everyone heard, sometimes even too much.",
             },
             {
                 name: "Anastasiia Prokopchuk",
