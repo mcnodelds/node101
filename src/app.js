@@ -86,7 +86,7 @@ app.get("/moralsupport", (_req, res) => {
         </div>
     </body>
     </html>
-    `)
+    `);
 });
 
 app.listen(port, () => {
