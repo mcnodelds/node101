@@ -1,4 +1,4 @@
-<% layout("/layouts/base", { title: "Скоро буде" }) %>
+<% layout("/layouts/base", { title: "Mcnodelds: student's food" }) %>
 
 <div class="countdown-container">
     <h1>САЙТ СКОРО БУДЕ, ЧЕСНО</h1>

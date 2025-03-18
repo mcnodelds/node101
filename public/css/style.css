@@ -159,3 +159,86 @@ body {
 .btn:hover {
     background-color: #b01010;
 }
+
+.footer {
+    line-height: 1.5;
+    padding: 70px 0;
+}
+
+.footer-row {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+
+}
+
+.footer-column {
+    width: 150px;
+    padding: 0 25px;
+
+}
+
+.footer-column h4 {
+    font-size: 18pt;
+    font-family: "Grenze Gotisch", sans-serif;
+    margin-bottom: 35px;
+    position: relative;
+}
+
+.footer-column h4::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    background-color: var(--m-aux-color);
+    height: 2px;
+    width: 100px;
+    box-sizing: border-box;
+}
+
+.footer-column ul {
+    padding: 0;
+    list-style: none;
+}
+
+.footer-column ul li:not(:last-child) {
+	margin-bottom: 10px;
+}
+
+.footer-social-links {
+    min-width: 100px;
+    margin: auto
+}
+
+.footer-social-links a {
+	display: inline-block;
+	height: 40px;
+	width: 40px;
+	background-color: rgba(255,255,255,0.2);
+	margin:0 10px 10px 0;
+	text-align: center;
+	line-height: 40px;
+	border-radius: 50%;
+	color: #ffffff;
+	transition: all 0.5s ease;
+}
+
+.footer-column ul li a {
+	font-size: 16px;
+	text-transform: capitalize;
+	text-decoration: none;
+    color: #bbbbbb;
+	display: block;
+	transition: all 0.3s ease;
+}
+
+.footer-social-links a:hover{
+	color: #24262b;
+	background-color: #ffffff;
+}
+
+.footer-column ul li a:hover{
+    color: #ffffff;
+	padding-left: 8px;
+}
+
