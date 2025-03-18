@@ -17,6 +17,7 @@ app.engine("eta", (path, opts, callback) => {
     }
 });
 
+app.set("trust proxy", true)
 app.set("view engine", "eta");
 app.set("views", path.join(import.meta.dirname, "views"));
 app.use(express.static(path.join(import.meta.dirname, "../public")));
