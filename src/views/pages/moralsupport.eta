@@ -1,0 +1,9 @@
+<% layout("/layouts/base", { title: "Моральна підтримка" }) %>
+
+<div class="flex flex-col items-center justify-center text-center min-h-screen p-4">
+    <h1 class="font-alegreya text-3xl">Please stare at this cat until healed</h1>
+    <img
+        src="/images/memes/moralsupport.jpg"
+        class="max-w-xs sm:max-w-sm md:max-w-md h-auto rounded-lg shadow-lg"
+    />
+</div>
