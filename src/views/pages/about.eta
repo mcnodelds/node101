@@ -1,11 +1,12 @@
 <% layout("/layouts/base", { title: "Про нас" }) %>
 
-<h1 align="center">Наша команда</h1>
+<h1 class="text-center font-alegreya text-2xl my-6">Наша команда</h1>
 
-<div class="devteam-container">
+<div class="max-w-[750px] p-[30px] flex flex-col gap-[25px] mx-auto">
     <% it.devteam.forEach((dev) => { %>
-        <div class="devteam-member">
+        <div class="flex flex-row text-left even:flex-row-reverse even:text-right">
             <%~ include("/partials/about/dev", dev); %>
         </div>
     <% }); %>
 </div>
+

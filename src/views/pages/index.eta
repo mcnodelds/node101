@@ -1,29 +1,33 @@
 <% layout("/layouts/base", { title: "Mcnodelds: student's food" }) %>
 
-<div class="countdown-container">
-    <h1>САЙТ СКОРО БУДЕ, ЧЕСНО</h1>
-    <div id="countdown">
-        <div class="countdown-box">
-            <div id="days">00</div>
-            <span>днів</span>
-        </div>
-        <div class="countdown-box">
-            <div id="hours">00</div>
-            <span>годин</span>
-        </div>
-        <div class="countdown-box">
-            <div id="minutes">00</div>
-            <span>хвилин</span>
-        </div>
-        <div class="countdown-box">
-            <div id="seconds">00</div>
-            <span>секунд</span>
-        </div>
+<div class="flex flex-col justify-center items-center text-center min-h-screen">
+  <h1 class="text-3xl font-bold">САЙТ СКОРО БУДЕ, ЧЕСНО</h1>
+
+  <div id="countdown" class="flex justify-center gap-5 mt-5 text-4xl font-grenze">
+    <div class="bg-base-200 p-5 min-w-[80px]">
+      <div id="days">00</div>
+      <span class="block text-base mt-1 text-bg-primary">днів</span>
     </div>
+    <div class="bg-base-200 p-5 min-w-[80px]">
+      <div id="hours">00</div>
+      <span class="block text-base mt-1 text-bg-primary">годин</span>
+    </div>
+    <div class="bg-base-200 p-5 min-w-[80px]">
+      <div id="minutes">00</div>
+      <span class="block text-base mt-1 text-error-content">хвилин</span>
+    </div>
+    <div class="bg-base-200 p-5 min-w-[80px]">
+      <div id="seconds">00</div>
+      <span class="block text-base mt-1 text-error-content">секунд</span>
+    </div>
+  </div>
 
-    <a href="/about" class="btn">Перейти на About</a>
-    <a href="/moralsupport" class="btn">Отримати моральну підтримку</a>
-
+  <a href="/about" class="btn btn-lg">
+    Перейти на About
+  </a>
+  <a href="/moralsupport" class="btn btn-lg">
+    Отримати моральну підтримку
+  </a>
 </div>
 
 <script>

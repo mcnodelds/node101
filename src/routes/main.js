@@ -53,23 +53,7 @@ router.get("/about", (_req, res) => {
 });
 
 router.get("/moralsupport", (_req, res) => {
-    res.send(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Моральна підтримка</title>
-        <link rel="stylesheet" href="/css/style.css">
-    </head>
-    <body>
-        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin: 100px, auto;">
-            <h1>Please stare at this cat until healed</h1>
-            <img src="/images/memes/moralsupport.jpg" />
-        </div>
-    </body>
-    </html>
-    `);
+    res.render("pages/moralsupport");
 });
 
 export default router;

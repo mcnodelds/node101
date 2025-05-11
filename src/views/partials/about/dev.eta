@@ -1,19 +1,27 @@
-<img src="<%= it.pfplink ? it.pfplink : 'https://github.com/'.concat(it.gh).concat(".png") %>" class="devteam-avatar" />
-<div class="devteam-member-info">
-    <div class="devteam-member-name">
+<img
+    src="<%=
+        it.pfplink
+        ? it.pfplink
+        : 'https://github.com/'.concat(it.gh).concat(".png")
+    %>"
+    class="avatar w-[100px] h-[100px] z-[4] transition-transform duration-300
+    ease-in-out hover:-translate-x-[10px] hover:-translate-y-[10px]"
+/>
+<div class="inline-flex flex-col max-w-[500px] pl-[25px] pr-[25px]">
+    <div class="text-2xl font-grenze">
             <%= it.name %>
         </a>
     </div>
     <a
-      class="devteam-gh-link"
+      class="text-current hover:underline"
       href="<%= "https://github.com/".concat(it.gh) %>"
     >
       Github
     </a>
-    <div class="devteam-member-role">
+    <div class="font-alegreya">
         <%= it.role %>
     </div>
-    <div class="devteam-member-desc">
+    <div class="pt-[5px] text-justify">
         <%= it.description %>
     </div>
 </div>
