@@ -5,63 +5,63 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "node101";
-  default: false;
-  prefersdark: true;
-  color-scheme: "mcnode";
-  --color-base-100: oklch(25.33% 0.016 252.42);
-  --color-base-200: oklch(23.26% 0.014 253.1);
-  --color-base-300: oklch(21.15% 0.012 254.09);
-  --color-base-content: oklch(97.807% 0.029 256.847);
-  --color-primary: oklch(45% 0.188 13.697);
-  --color-primary-content: oklch(0% 0 0);
-  --color-secondary: oklch(65% 0.241 354.308);
-  --color-secondary-content: oklch(94% 0.028 342.258);
-  --color-accent: oklch(64% 0.246 16.439);
-  --color-accent-content: oklch(96% 0.015 12.422);
-  --color-neutral: oklch(14% 0.005 285.823);
-  --color-neutral-content: oklch(92% 0.004 286.32);
-  --color-info: oklch(81% 0.117 11.638);
-  --color-info-content: oklch(14% 0.004 49.25);
-  --color-success: oklch(71% 0.194 13.428);
-  --color-success-content: oklch(0% 0 0);
-  --color-warning: oklch(82% 0.189 84.429);
-  --color-warning-content: oklch(41% 0.112 45.904);
-  --color-error: oklch(51% 0.253 323.949);
-  --color-error-content: oklch(100% 0 0);
-  --radius-selector: 2rem;
-  --radius-field: 0rem;
-  --radius-box: 0rem;
-  --size-selector: 0.25rem;
-  --size-field: 0.25rem;
-  --border: 1px;
-  --depth: 1;
-  --noise: 0;
+    name: "node101";
+    default: false;
+    prefersdark: true;
+    color-scheme: "mcnode";
+    --color-base-100: oklch(25.33% 0.016 252.42);
+    --color-base-200: oklch(23.26% 0.014 253.1);
+    --color-base-300: oklch(21.15% 0.012 254.09);
+    --color-base-content: oklch(97.807% 0.029 256.847);
+    --color-primary: oklch(45% 0.188 13.697);
+    --color-primary-content: oklch(0% 0 0);
+    --color-secondary: oklch(65% 0.241 354.308);
+    --color-secondary-content: oklch(94% 0.028 342.258);
+    --color-accent: oklch(64% 0.246 16.439);
+    --color-accent-content: oklch(96% 0.015 12.422);
+    --color-neutral: oklch(14% 0.005 285.823);
+    --color-neutral-content: oklch(92% 0.004 286.32);
+    --color-info: oklch(81% 0.117 11.638);
+    --color-info-content: oklch(14% 0.004 49.25);
+    --color-success: oklch(71% 0.194 13.428);
+    --color-success-content: oklch(0% 0 0);
+    --color-warning: oklch(82% 0.189 84.429);
+    --color-warning-content: oklch(41% 0.112 45.904);
+    --color-error: oklch(51% 0.253 323.949);
+    --color-error-content: oklch(100% 0 0);
+    --radius-selector: 2rem;
+    --radius-field: 0rem;
+    --radius-box: 0rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
 }
 
 @theme {
-  --font-grenze: "Grenze Gotisch", serif;
-  --font-alegreya: "Alegreya", serif;
-  --font-alegreya-sans: "Alegreya Sans", sans-serif;
+    --font-grenze: "Grenze Gotisch", serif;
+    --font-alegreya: "Alegreya", serif;
+    --font-alegreya-sans: "Alegreya Sans", sans-serif;
 }
 
 @font-face {
-  font-family: "Grenze Gotisch";
-  src: url("/fonts/GrenzeGotisch.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
+    font-family: "Grenze Gotisch";
+    src: url("/fonts/GrenzeGotisch.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Alegreya";
-  src: url("/fonts/Alegreya.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
+    font-family: "Alegreya";
+    src: url("/fonts/Alegreya.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: "Alegreya Sans";
-  src: url("/fonts/AlegreyaSans.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
+    font-family: "Alegreya Sans";
+    src: url("/fonts/AlegreyaSans.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
 }

@@ -1,10 +1,8 @@
-import userModel from "./models/user.js";
+import { z } from "zod";
+import user from "#models/user.js";
 
-/**
- * @typedef {import("./models/user.js").User} User
- */
+/** @typedef {z.infer<typeof user.schema>} User */
 
-// In-memory store for users
 /** @type {User[]} */
 const users = [];
 let nextId = 1;
@@ -17,6 +15,7 @@ let nextId = 1;
 async function findByUsername(username) {
     return new Promise((resolve) => {
         const user = users.find((u) => u.username === username);
+
         resolve(user || null);
     });
 }
@@ -44,12 +43,13 @@ async function findById(id) {
  */
 async function create(username, passwordHash, email = null) {
     return new Promise((resolve) => {
-        const newUser = userModel.create(
-            nextId++,
+        const newUser = {
+            id: nextId++,
             username,
             passwordHash,
-            email
-        );
+            email,
+        }
+
         users.push(newUser);
         resolve(newUser);
     });
@@ -61,7 +61,7 @@ async function create(username, passwordHash, email = null) {
  */
 async function clearAll() {
     return new Promise((resolve) => {
-        users.length = 0; // Clears the array
+        users.length = 0;
         nextId = 1;
         resolve();
     });
@@ -71,5 +71,5 @@ export default {
     findByUsername,
     findById,
     create,
-    clearAll, // Optional: for testing or resetting state
+    clearAll,
 };

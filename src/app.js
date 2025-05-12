@@ -7,7 +7,7 @@ import {
     orderRoutes,
     userRoutes,
     apiRoutes,
-} from "./routes.js";
+} from "#routes.js";
 
 const port = process.env.PORT || 3000;
 const app = express();
