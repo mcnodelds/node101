@@ -1,7 +1,13 @@
 import express from "express";
 import { Eta } from "eta";
 import path from "path";
-import { cartRoutes, mainRoutes, orderRoutes, userRoutes } from "./routes.js";
+import {
+    cartRoutes,
+    mainRoutes,
+    orderRoutes,
+    userRoutes,
+    apiRoutes,
+} from "./routes.js";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -17,7 +23,7 @@ app.engine("eta", (path, opts, callback) => {
     }
 });
 
-app.set("trust proxy", true)
+app.set("trust proxy", true);
 app.set("view engine", "eta");
 app.set("views", path.join(import.meta.dirname, "views"));
 app.use(express.static(path.join(import.meta.dirname, "../public")));
@@ -25,6 +31,7 @@ app.use("/", mainRoutes);
 app.use("/user", userRoutes);
 app.use("/orders", orderRoutes);
 app.use("/cart", cartRoutes);
+app.use("/api", apiRoutes);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
