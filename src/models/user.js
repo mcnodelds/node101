@@ -1,28 +1,18 @@
-/**
- * @typedef {object} User
- * @property {number|string} id - The unique identifier for the user.
- * @property {string} username - The user's username.
- * @property {string} passwordHash - The user's hashed password.
- * @property {string|null} [email] - The user's email address (optional).
- */
+import { z } from "zod";
 
-/**
- * Creates a user object.
- * @param {number|string} id - The unique identifier for the user.
- * @param {string} username - The user's username.
- * @param {string} passwordHash - The user's hashed password.
- * @param {string|null} email - The user's email address (optional).
- * @returns {User} The user object.
- */
-function createUser(id, username, passwordHash, email = null) {
-    return {
-        id,
-        username,
-        passwordHash,
-        email,
-    };
-}
+/** @typedef {z.infer<typeof schema>} User */
+
+export const schema = z.object({
+    id: z.number().int({ message: "ID must be an integer." }),
+    username: z.string().min(1, { message: "Username is required." }),
+    passwordHash: z.string().min(1, { message: "Password hash is required." }),
+    email: z
+        .string()
+        .email({ message: "Invalid email format." })
+        .nullable()
+        .optional(),
+});
 
 export default {
-    create: createUser,
+    schema
 };
