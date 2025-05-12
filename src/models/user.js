@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { default as roleSchema } from "#models/role.js";
 
 /** @typedef {z.infer<typeof schema>} User */
 
@@ -11,8 +12,9 @@ export const schema = z.object({
         .email({ message: "Invalid email format." })
         .nullable()
         .optional(),
+    role: roleSchema,
 });
 
 export default {
-    schema
+    schema,
 };

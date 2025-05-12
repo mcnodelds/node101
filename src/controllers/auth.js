@@ -68,9 +68,10 @@ export class AuthError extends Error {
 
 /**
  * Expected payload structure of the JWT.
- * @typedef {object} JwtPayload
+ * @typedef {object} AuthClaims
  * @property {number|string} id - The user's ID.
  * @property {string} username - The user's username.
+ * @property {string} role - The user's role.
  * @property {number} [iat] - Issued at timestamp.
  * @property {number} [exp] - Expiration timestamp.
  */
@@ -97,6 +98,7 @@ async function generateToken(user) {
     const payload = {
         id: user.id,
         username: user.username,
+        role: user.role,
     };
 
     const jwt = await new jose.SignJWT(payload)
@@ -113,7 +115,7 @@ async function generateToken(user) {
 /**
  * Verifies a JWT.
  * @param {string} token - The JWT to verify.
- * @returns {Promise<JwtPayload | null>} The decoded payload if the token is valid, otherwise null.
+ * @returns {Promise<AuthClaims | null>} The decoded payload if the token is valid, otherwise null.
  */
 export async function verifyToken(token) {
     if (!token) {
@@ -136,7 +138,7 @@ export async function verifyToken(token) {
         return null;
     }
 
-    return /** @type {JwtPayload} */ (payload.payload);
+    return /** @type {AuthClaims} */ (payload.payload);
 }
 
 const BCRYPT_SALT_ROUNDS = 10;

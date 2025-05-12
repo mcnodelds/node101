@@ -1,7 +1,15 @@
-import { z } from "zod";
-import user from "#models/user.js";
-
-/** @typedef {z.infer<typeof user.schema>} User */
+/**
+     @typedef {
+    import("zod").infer<
+        typeof import("#models/user.js").schema
+    >
+} User */
+/**
+     @typedef {
+    import("zod").infer<
+        typeof import("#models/role.js").schema
+    >
+} Role */
 
 /** @type {User[]} */
 const users = [];
@@ -38,17 +46,19 @@ async function findById(id) {
  * Creates a new user.
  * @param {string} username - The username.
  * @param {string} passwordHash - The hashed password.
+ * @param {Role} role - The user's role.
  * @param {string|null} [email] - The user's email (optional).
  * @returns {Promise<User>} The created user.
  */
-async function create(username, passwordHash, email = null) {
+async function create(username, passwordHash, role, email = null) {
     return new Promise((resolve) => {
         const newUser = {
             id: nextId++,
             username,
             passwordHash,
+            role,
             email,
-        }
+        };
 
         users.push(newUser);
         resolve(newUser);
