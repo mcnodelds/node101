@@ -18,11 +18,11 @@
  */
 
 /**
- * Wraps a function call and returns a tuple [result, error].
+ * Wraps a function call and returns a result object
  * Works with both sync and async functions.
  * @template T
  * @param {() => Promise<T> | T} fn - The function to execute.
- * @returns {Promise<Result<T>>}
+ * @returns {Promise<Result<T>>} - Result object
  */
 export async function tryCatch(fn) {
     try {
@@ -41,51 +41,48 @@ export async function tryCatch(fn) {
 }
 
 /**
- * @typedef {import('express').Request & { context?: Record<string, any> }} RequestWithContext
+ * Key-specific types for `context` values.
+ * @typedef {object} ContextData
+ * @property {import("#controllers/auth.js").AuthClaims} claims - claims payload
  */
 
 /**
- * Key-specific types for `context` values.
- * @typedef {object} ContextData
- * @property {import("#controllers/auth.js").JwtPayload} user
+ * @typedef {
+    import('express').Request & {context?: {[key: string]: any}}
+ } RequestWithContext
  */
 
 /**
  * Attach arbitrary data to the request object under the `context` key.
  * The type of the value is inferred based on the key.
+ * @template {keyof ContextData} K
  * @param {import('express').Request} req - The Express request object.
- * @param {keyof ContextData} key - The key under which the value will be attached.
- * @param {ContextData[keyof ContextData]} value - The value to attach to the request object.
+ * @param {K} key - The key under which the value will be attached.
+ * @param {ContextData[K]} value - The value to attach to the request object.
  */
 export function attach(req, key, value) {
     /** @type {RequestWithContext} */
     const r = req;
 
-    // Initialize context if it doesn't exist
-    if (!r.context) {
-        r.context = {};
-    }
+    r.context = r.context || {};
 
-    // Assign the value to the context for the given key
     r.context[key] = value;
+    return;
 }
 
 /**
  * Retrieve data associated with a key from the request object's `context`.
  * The type of the returned value is inferred based on the key.
+ * @template {keyof ContextData} K
  * @param {import('express').Request} req - The Express request object.
- * @param {keyof ContextData} key - The key associated with the data.
- * @returns {ContextData[keyof ContextData] | undefined} - The data associated with the key, or `undefined` if not found.
+ * @param {K} key - The key associated with the data.
+ * @returns {ContextData[K] | undefined} - The data associated with the key, or `undefined` if not found.
  */
 export function lookup(req, key) {
     /** @type {RequestWithContext} */
     const r = req;
 
-    if (r.context && r.context[key] !== undefined) {
-        return r.context[key]; // Return the value for the given key
-    }
-
-    return undefined;
+    return r?.context?.[key];
 }
 
 export default {
