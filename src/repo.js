@@ -11,35 +11,26 @@
     >
 } Role */
 
+let nextId = 1;
 /** @type {User[]} */
 const users = [];
-let nextId = 1;
 
 /**
  * Finds a user by their username.
  * @param {string} username - The username to search for.
  * @returns {Promise<User|null>} The found user or null.
  */
-async function findByUsername(username) {
-    return new Promise((resolve) => {
-        const user = users.find((u) => u.username === username);
-
-        resolve(user || null);
-    });
+export async function findUserByUsername(username) {
+    return users.find((u) => u.username === username) || null;
 }
 
 /**
  * Finds a user by their ID.
- * @param {number|string} id - The ID of the user.
+ * @param {number} id - The ID of the user.
  * @returns {Promise<User|null>} The found user or null.
  */
-async function findById(id) {
-    return new Promise((resolve) => {
-        // Ensure consistent ID type if needed, though in-memory might be flexible
-        const userId = typeof id === "string" ? parseInt(id, 10) : id;
-        const user = users.find((u) => u.id === userId);
-        resolve(user || null);
-    });
+export async function findUserById(id) {
+    return users.find((u) => u.id === id) || null;
 }
 
 /**
@@ -50,36 +41,32 @@ async function findById(id) {
  * @param {string|null} [email] - The user's email (optional).
  * @returns {Promise<User>} The created user.
  */
-async function create(username, passwordHash, role, email = null) {
-    return new Promise((resolve) => {
-        const newUser = {
-            id: nextId++,
-            username,
-            passwordHash,
-            role,
-            email,
-        };
+export async function createUser(username, passwordHash, role, email = null) {
+    const newUser = {
+        id: nextId++,
+        username,
+        passwordHash,
+        role,
+        email,
+    };
 
-        users.push(newUser);
-        resolve(newUser);
-    });
+    users.push(newUser);
+    return newUser;
 }
 
 /**
  * (Optional) Clears all users from the repository. Useful for testing.
  * @returns {Promise<void>}
  */
-async function clearAll() {
-    return new Promise((resolve) => {
-        users.length = 0;
-        nextId = 1;
-        resolve();
-    });
+export async function clearAllUsers() {
+    users.length = 0;
+    nextId = 1;
+    return;
 }
 
 export default {
-    findByUsername,
-    findById,
-    create,
-    clearAll,
+    findUserByUsername,
+    findUserById,
+    createUser,
+    clearAllUsers,
 };

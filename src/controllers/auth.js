@@ -151,7 +151,7 @@ const BCRYPT_SALT_ROUNDS = 10;
  */
 export async function register({ username, password, email }) {
     const { result: existingUser, error: ferror } = await tryCatch(() =>
-        repo.findByUsername(username)
+        repo.findUserByUsername(username)
     );
 
     if (ferror != null) {
@@ -173,7 +173,7 @@ export async function register({ username, password, email }) {
     }
 
     const { result: newUser, error: cerror } = await tryCatch(() =>
-        repo.create(username, passwordHash, email)
+        repo.createUser(username, passwordHash, "user", email)
     );
 
     if (cerror != null) {
@@ -209,7 +209,7 @@ export async function register({ username, password, email }) {
  */
 export async function login({ username, password }) {
     const { result: user, error: findError } = await tryCatch(() =>
-        repo.findByUsername(username)
+        repo.findUserByUsername(username)
     );
 
     if (findError != null) {
