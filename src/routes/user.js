@@ -8,11 +8,11 @@ router.get("/", (_req, res) => {
 });
 
 router.get("/login", (_req, res) => {
-    res.render("login", {});
+    res.render("pages/login", {});
 });
 
 router.get("/register", (_req, res) => {
-    res.render("register", {});
+    res.render("pages/register", {});
 });
 
 export default router;
