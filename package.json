@@ -58,7 +58,17 @@
     "stylelint": {
         "rules": {
             "annotation-no-unknown": true,
-            "at-rule-no-unknown": true,
+            "at-rule-no-unknown": [
+                true,
+                {
+                    "ignoreAtRules": [
+                        "tailwind",
+                        "apply",
+                        "plugin",
+                        "theme"
+                    ]
+                }
+            ],
             "block-no-empty": true,
             "color-no-invalid-hex": true,
             "comment-no-empty": true,

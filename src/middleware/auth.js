@@ -24,8 +24,8 @@ import { attach, asyncHandler } from "#utils.js";
 
 /**
  * Express middleware to authenticate a user based on a JWT.
- * Expects a JWT in the 'Authorization' header with the 'Bearer' scheme.
- * If authentication is successful, attaches the decoded JWT payload to `req.user`.
+ * Expects a JWT in the 'Authorization' header with the 'Bearer' scheme or authToken in cookies.
+ * If authentication is successful, attaches the decoded JWT payload to `req.context.claims`.
  * @param {AuthorizeMiddlewareParams} params - rules to use with authorization
  * @returns {express.Handler} - handler that you can attach to router
  */
