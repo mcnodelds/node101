@@ -34,6 +34,9 @@ app.use("/user", userRoutes);
 app.use("/orders", orderRoutes);
 app.use("/cart", cartRoutes);
 app.use("/api", apiRoutes);
+app.use((_req, res) => {
+    res.status(404).render("pages/notfound");
+});
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);

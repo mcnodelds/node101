@@ -12,4 +12,8 @@ router.get("/", (_req, res) => {
     res.json({ message: "Welcome to the API" });
 });
 
+router.use((_req, res) => {
+    res.status(404).send();
+});
+
 export default router;
