@@ -1,0 +1,89 @@
+<% layout("/layouts/base", { title: "Login" }) %>
+
+<div class="min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-base-200 rounded-lg shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-center mb-6 font-grenze">Login</h2>
+        <form id="login-form">
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-medium mb-2">Username</label> <% /* Changed label */ %>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    required
+                    minlength="3"
+                    class="input input-bordered w-full"
+                    placeholder="Enter your username"
+                />
+            </div>
+
+            <div class="mb-6">
+                <label for="password" class="block text-sm font-medium mb-2">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    minlength="6"
+                    class="input input-bordered w-full"
+                    placeholder="Enter your password"
+                />
+            </div>
+            <div class="mb-6">
+                <button type="submit" class="btn btn-primary w-full">Login</button>
+            </div>
+
+            <div id="error-message" class="alert alert-error alert-soft text-center hidden"></div>
+            <div id="success-message" class="alert alert-success alert-soft text-center hidden"></div>
+
+            <p class="text-center text-sm">
+                Don't have an account?
+                <a href="/user/register" class="link link-hover link-secondary">Register here</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+<script>
+    const loginForm = document.getElementById("login-form");
+    const successMessageDiv = document.getElementById("success-message");
+    const errorMessageDiv = document.getElementById("error-message");
+
+    loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        errorMessageDiv.classList.add("hidden"); // Hide previous errors
+        errorMessageDiv.textContent = '';
+        successMessageDiv.classList.add("hidden");
+        successMessageDiv.textContent = '';
+
+        const formData = new FormData(loginForm);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.token) {
+                successMessageDiv.textContent = "Success!";
+                successMessageDiv.classList.remove("hidden");
+                localStorage.setItem('authToken', result.token);
+                window.location.pathname = "/";
+            } else {
+                errorMessageDiv.textContent = result.message
+                    || 'Login failed. Please check your username and password.';
+                errorMessageDiv.classList.remove("hidden");
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            errorMessageDiv.textContent = 'An error occurred during login. Please try again.';
+            errorMessageDiv.classList.remove("hidden");
+        }
+    });
+</script>
