@@ -1,8 +1,7 @@
 import { Router } from "express";
-import asyncHandler from "express-async-handler";
 import { z } from "zod";
 import auth from "#controllers/auth.js";
-import { tryCatch } from "#utils.js";
+import { tryCatch, asyncHandler } from "#utils.js";
 import { validate } from "#middleware/validate.js";
 
 /** @type {Router} */

@@ -1,7 +1,6 @@
 import express from "express";
-import expressAsyncHandler from "express-async-handler";
 import auth from "#controllers/auth.js";
-import { attach } from "#utils.js";
+import { attach, asyncHandler } from "#utils.js";
 
 /**
  * @typedef {import("#controllers/auth.js").AuthClaims} AuthClaims
@@ -28,7 +27,7 @@ import { attach } from "#utils.js";
  * @returns {express.Handler} - handler that you can attach to router
  */
 export const authorize = (params) => {
-    return expressAsyncHandler(async (req, res, next) => {
+    return asyncHandler(async (req, res, next) => {
         const authHeader = req.get("Authorization");
         const token =
             authHeader &&
