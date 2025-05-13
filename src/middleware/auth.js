@@ -6,6 +6,8 @@ import { attach, asyncHandler } from "#utils.js";
  * @typedef {import("#controllers/auth.js").AuthClaims} AuthClaims
  */
 
+/** @typedef {"api" | "client"} AuthMode */
+
 /**
  * Type for authorization check function
  * @typedef {
@@ -17,6 +19,7 @@ import { attach, asyncHandler } from "#utils.js";
  * @typedef {object} AuthorizeMiddlewareParams
  * @property {string[]} [roleWhitelist] - Allowed roles
  * @property {AuthorizationCheck} [check] - Custom authorization check
+ * @property {AuthMode} [mode] - A mode of authorize, if api will result in json, if client -- in render("pages/notfound")
  */
 
 /**
@@ -28,6 +31,7 @@ import { attach, asyncHandler } from "#utils.js";
  */
 export const authorize = (params) => {
     return asyncHandler(async (req, res, next) => {
+        const mode = params.mode || "api";
         /** @type {string?} */
         let token = null;
 
@@ -36,27 +40,19 @@ export const authorize = (params) => {
             token = authHeader.substring("Bearer ".length);
         }
 
-        if (
-            !token &&
-            typeof req.cookies?.authToken === "string" &&
-            req.cookies.authToken.length > 0
-        ) {
+        if (!token && req.cookies?.authToken) {
             token = req.cookies.authToken;
         }
 
         if (!token) {
-            res.status(401).json({
-                message: "Access denied. No token provided.",
-            });
+            render(res, mode, 401, "Access denied. No token provided.");
             return;
         }
 
         const claims = await auth.verifyToken(token);
 
         if (!claims) {
-            res.status(401).json({
-                message: "Access denied. Invalid or expired token.",
-            });
+            render(res, mode, 401, "Access denied. Invalid or expired token.");
             return;
         }
 
@@ -71,10 +67,7 @@ export const authorize = (params) => {
         }
 
         if (!isAuthorized) {
-            res.status(403).json({
-                message: "Access denied.",
-            });
-
+            render(res, mode, 403, "Access denied.");
             return;
         }
 
@@ -83,6 +76,28 @@ export const authorize = (params) => {
         return;
     });
 };
+
+/**
+ * Sends an appropriate error response based on the authentication mode.
+ * @param {express.Response} res - The Express response object used to send the HTTP response.
+ * @param {AuthMode} mode - The mode of the request; either "client" (renders an HTML page) or "api" (returns JSON).
+ * @param {number} code - The HTTP status code to send with the response (used only in API mode).
+ * @param {string} message - The error message to include in the JSON response (used only in API mode).
+ * @returns {void}
+ */
+function render(res, mode, code, message) {
+    if (mode == "client") {
+        res.render("pages/notfound");
+        return;
+    }
+
+    if (mode == "api") {
+        res.status(code).json({
+            message: message,
+        });
+        return;
+    }
+}
 
 export default {
     authorize,
