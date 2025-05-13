@@ -88,24 +88,21 @@ export function lookup(req, key) {
 /**
  * A utility function to wrap asynchronous Express route handlers and middleware.
  * Automatically forwards rejected promises to Express's error handler.
- *
  * @param {(req: import('express').Request, res: import('express').Response, next: import('express').NextFunction) => Promise<any>} fn
  *   An asynchronous Express handler or middleware.
- * 
  * @returns {(req: import('express').Request, res: import('express').Response, next: import('express').NextFunction) => void}
  *   A wrapped Express handler that catches errors and passes them to `next()`.
  */
 export function asyncHandler(fn) {
-  return function (req, res, next) {
-    const fnReturn = fn(req, res, next);
-    return Promise.resolve(fnReturn).catch(next);
-  };
+    return (req, res, next) => {
+        const fnReturn = fn(req, res, next);
+        return Promise.resolve(fnReturn).catch(next);
+    };
 }
+
 export default {
     tryCatch,
     attach,
     lookup,
     asyncHandler,
 };
-
-

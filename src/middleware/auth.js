@@ -28,11 +28,21 @@ import { attach, asyncHandler } from "#utils.js";
  */
 export const authorize = (params) => {
     return asyncHandler(async (req, res, next) => {
+        /** @type {string?} */
+        let token = null;
+
         const authHeader = req.get("Authorization");
-        const token =
-            authHeader &&
-            authHeader.startsWith("Bearer ") &&
-            authHeader.split(" ")[1];
+        if (!token && authHeader?.startsWith("Bearer ")) {
+            token = authHeader.substring("Bearer ".length);
+        }
+
+        if (
+            !token &&
+            typeof req.cookies?.authToken === "string" &&
+            req.cookies.authToken.length > 0
+        ) {
+            token = req.cookies.authToken;
+        }
 
         if (!token) {
             res.status(401).json({

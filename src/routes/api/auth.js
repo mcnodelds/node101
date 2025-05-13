@@ -1,11 +1,18 @@
-import { Router } from "express";
+import express from "express";
 import { z } from "zod";
 import auth from "#controllers/auth.js";
 import { tryCatch, asyncHandler } from "#utils.js";
 import { validate } from "#middleware/validate.js";
 
-/** @type {Router} */
-const router = Router();
+/** @type {express.Router} */
+const router = express.Router();
+
+/** @type {express.CookieOptions} */
+const cookieOpts = {
+    sameSite: "strict",
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60,
+};
 
 export const registerSchema = z.object({
     username: z.string().min(3).max(32),
@@ -37,7 +44,7 @@ router.post(
             return;
         }
 
-        res.status(201).json({
+        res.cookie("authToken", result.token, cookieOpts).status(201).json({
             message: "User registered successfully.",
             user: result.user,
             token: result.token,
@@ -75,7 +82,7 @@ router.post(
             return;
         }
 
-        res.status(200).json({
+        res.cookie("authToken", result.token, cookieOpts).status(200).json({
             message: "Login successful.",
             user: result.user,
             token: result.token,
