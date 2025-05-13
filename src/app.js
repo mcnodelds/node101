@@ -8,6 +8,7 @@ import {
     userRoutes,
     apiRoutes,
 } from "#routes.js";
+import cookieParser from "cookie-parser";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -27,6 +28,7 @@ app.set("trust proxy", true);
 app.set("view engine", "eta");
 app.set("views", path.join(import.meta.dirname, "views"));
 app.use(express.static(path.join(import.meta.dirname, "../public")));
+app.use(cookieParser());
 app.use("/", mainRoutes);
 app.use("/user", userRoutes);
 app.use("/orders", orderRoutes);
