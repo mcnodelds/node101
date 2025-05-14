@@ -10,10 +10,18 @@
         typeof import("#models/role.js").schema
     >
 } Role */
+/**
+     @typedef {
+        import("zod").infer<
+        typeof import("#models/dish.js").schema
+    >
+} Dish */
 
 let nextId = 1;
 /** @type {User[]} */
 const users = [];
+/** @type {Dish[]} */
+const menu = [];
 
 /**
  * Finds a user by their username.
@@ -64,9 +72,48 @@ export async function clearAllUsers() {
     return;
 }
 
+/**
+ * Returns whole menu
+ * @returns {Promise<Dish[]>} The menu itself.
+ */
+export async function getMenu() {
+    return menu;
+}
+
+/**
+ * Creates a new dish.
+ * @param {string} name - The name.
+ * @param {number} portion - The portion od dish.
+ * @param {number} price - The price of dish.
+ * @param {string} description - The description.
+ * @param {string} imageurl - The image.
+ * @returns {Promise<Dish>} The new dish.
+ */
+export async function createMenuItem(
+    name,
+    portion,
+    price,
+    description,
+    imageurl
+) {
+    const newDish = {
+        id: nextId++,
+        name,
+        portion,
+        price,
+        description,
+        imageurl,
+    };
+
+    menu.push(newDish);
+    return newDish;
+}
+
 export default {
     findUserByUsername,
     findUserById,
     createUser,
     clearAllUsers,
+    getMenu,
+    createMenuItem,
 };
