@@ -43,7 +43,7 @@ export async function tryCatch(fn) {
 /**
  * Key-specific types for `context` values.
  * @typedef {object} ContextData
- * @property {import("#controllers/auth.js").AuthClaims} claims - claims payload
+ * @property {import("#handlers/auth.js").AuthClaims} claims - claims payload
  */
 
 /**
@@ -88,8 +88,7 @@ export function lookup(req, key) {
 /**
  * A utility function to wrap asynchronous Express route handlers and middleware.
  * Automatically forwards rejected promises to Express's error handler.
- * @param {(req: import('express').Request, res: import('express').Response, next: import('express').NextFunction) => Promise<any>} fn
- *   An asynchronous Express handler or middleware.
+ * @param {(req: import('express').Request, res: import('express').Response, next: import('express').NextFunction) => Promise<any>} fn An asynchronous Express handler or middleware.
  * @returns {(req: import('express').Request, res: import('express').Response, next: import('express').NextFunction) => void}
  *   A wrapped Express handler that catches errors and passes them to `next()`.
  */
