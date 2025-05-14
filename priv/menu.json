@@ -1,0 +1,79 @@
+[
+    {
+        "name": "Стейк",
+        "portion": 500,
+        "price": 1500,
+        "description": "Найніжніше м'ясо у вашому житті з гарніром з найвіддаленіших куточків світу",
+        "imageurl": "/images/menu/1.jpeg"
+    },
+    {
+        "name": "Кава",
+        "portion": 100,
+        "price": 50,
+        "description": "Високосортна арабіка у вашій чашці",
+        "imageurl": "/images/menu/0.jpeg"
+    },
+    {
+        "name": "Бургер",
+        "portion": 400,
+        "price": 300,
+        "description": "Соковита яловича у поєнанні з двома жирними булочками, помідорами, бекономб сиром та салатомб замовляйте разом з серветками",
+        "imageurl": "/images/menu/2.jpeg"
+    },
+    {
+        "name": "Суші",
+        "portion": 1000,
+        "price": 1100,
+        "description": "Розпіарені японські традиції у вас на талірці",
+        "imageurl": "/images/menu/3.jpeg"
+    },
+    {
+        "name": "Рамен",
+        "portion": 450,
+        "price": 400,
+        "description": "Гаряча лапша, м'ясо, зелень, яйця",
+        "imageurl": "/images/menu/4.jpeg"
+    },
+    {
+        "name": "Піца",
+        "portion": 600,
+        "price": 200,
+        "description": "Для любителів сирної скоринки, папероні та уцілілих жертв сурових дієт",
+        "imageurl": "/images/menu/5.jpeg"
+    },
+    {
+        "name": "Салат",
+        "portion": 500,
+        "price": 300,
+        "description": "Для тих, хто не здався",
+        "imageurl": "/images/menu/6.jpeg"
+    },
+    {
+        "name": "Кола",
+        "portion": 300,
+        "price": 40,
+        "description": "Освіжаючий напій для цьогго літа",
+        "imageurl": "/images/menu/7.jpeg"
+    },
+    {
+        "name": "Фруктова нарізка",
+        "portion": 800,
+        "price": 300,
+        "description": "Хіт літа, взимку націнка 500 грн",
+        "imageurl": "/images/menu/8.jpeg"
+    },
+    {
+        "name": "Пінне і до нього",
+        "portion": 1500,
+        "price": 1000,
+        "description": "Картинка замість тисячі слів",
+        "imageurl": "/images/menu/9.jpeg"
+    },
+    {
+        "name": "Нагенси",
+        "portion": 500,
+        "price": 200,
+        "description": "Кідс френдлі",
+        "imageurl": "/images/menu/10.jpeg"
+    }
+]
