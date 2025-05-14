@@ -1,9 +1,9 @@
 import express from "express";
-import auth from "#controllers/auth.js";
+import auth from "#handlers/auth.js";
 import { attach, asyncHandler } from "#utils.js";
 
 /**
- * @typedef {import("#controllers/auth.js").AuthClaims} AuthClaims
+ * @typedef {import("#handlers/auth.js").AuthClaims} AuthClaims
  */
 
 /** @typedef {"api" | "client"} AuthMode */

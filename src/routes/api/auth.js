@@ -1,6 +1,6 @@
 import express from "express";
 import { z } from "zod";
-import auth from "#controllers/auth.js";
+import auth from "#handlers/auth.js";
 import { tryCatch, asyncHandler } from "#utils.js";
 import { validate } from "#middleware/validate.js";
 
