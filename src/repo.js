@@ -21,7 +21,7 @@ let nextId = 1;
 /** @type {User[]} */
 const users = [];
 /** @type {Dish[]} */
-const menu = [];
+let menu = [];
 
 /**
  * Finds a user by their username.
@@ -109,6 +109,54 @@ export async function createMenuItem(
     return newDish;
 }
 
+/**
+ * Creates a new dish.
+ * @param {number} id - The ID of dish.
+ * @returns {Promise<void>} The new dish.
+ */
+export async function deleteMenuItemById(id) {
+    menu = menu.filter((dish) => dish.id !== id);
+    return;
+}
+
+/**
+ * Changes info about dish.
+ * @param {number} id - The ID of dish.
+ * @param {string} name - The name.
+ * @param {number} portion - The portion od dish.
+ * @param {number} price - The price of dish.
+ * @param {string} description - The description.
+ * @param {string} imageurl - The image.
+ * @returns {Promise<Dish|null>} The updated dish.
+ */
+export async function updateMenuItemById(
+    id,
+    name,
+    portion,
+    price,
+    description,
+    imageurl
+) {
+    let dish = menu.find((u) => u.id === id) || null;
+    if (dish == null) {
+        return null;
+    }
+    dish.name = name;
+    dish.portion = portion;
+    dish.price = price;
+    dish.description = description;
+    dish.imageurl = imageurl;
+    return dish;
+}
+
+/**
+ * Finds a  dish.
+ * @param {number} id - The ID of dish.
+ * @returns {Promise<Dish|null>} The dish.
+ */
+export async function findMenuItemById(id) {
+    return menu.find((dish) => dish.id === id) || null;
+}
 export default {
     findUserByUsername,
     findUserById,
@@ -116,4 +164,7 @@ export default {
     clearAllUsers,
     getMenu,
     createMenuItem,
+    deleteMenuItemById,
+    updateMenuItemById,
+    findMenuItemById,
 };
