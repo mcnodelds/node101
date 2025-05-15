@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= it.title %></title>
+    <title><%= it?.title %></title>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <% const css = it.css || [
+    <% const css = it?.css || [
         "/css/style.css",
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
     ] %>
@@ -14,12 +14,18 @@
     <% }) %>
 </head>
 <body class="font-alegreya-sans bg-base-100 text-base-content min-h-screen">
-    <header>
-            
-    </header>
+    <script>
+        localStorage.cart = localStorage.cart || JSON.stringify({});
+    </script>
+
+    <% if (!it?.hideHeader) { %>
+        <%~ include("/partials/header", { claims: it?.claims }); %>
+    <% } %>
 
     <%~ it.body %>
     
-    <%~ include("/partials/footer"); %>
+    <% if (!it?.hideFooter) { %>
+        <%~ include("/partials/footer"); %>
+    <% } %>
 </body>
 </html>
