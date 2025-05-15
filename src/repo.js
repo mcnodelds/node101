@@ -1,9 +1,9 @@
-/**
-     @typedef {
-    import("zod").infer<
-        typeof import("#models/user.js").schema
-    >
-} User */
+import fs from "node:fs";
+import path from "node:path";
+import { z } from "zod";
+import { schema as userSchema } from "#models/user.js";
+
+/** @typedef {import("zod").infer<typeof userSchema>} User */
 /**
      @typedef {
     import("zod").infer<
@@ -12,8 +12,68 @@
 } Role */
 
 let nextId = 1;
+
 /** @type {User[]} */
 const users = [];
+
+function seedUsersSync() {
+    const data = fs.readFileSync(path.join(import.meta.dirname, "../priv/users.json"), "utf-8");
+    users.push(...z
+        .array(userSchema.omit({ id: true }))
+        .parse(JSON.parse(data))
+        .map(u => ({ id: nextId++, ...u }))
+    );
+}
+
+function seedUsersCallback() {
+    fs.readFile(path.join(import.meta.dirname, "../priv/users.json"), (err, data) => {
+        if (err != null) {
+            throw err;
+        }
+
+        users.push(...z
+            .array(userSchema.omit({ id: true }))
+            .parse(JSON.parse(data.toString()))
+            .map(u => ({ id: nextId++, ...u }))
+        );
+    });
+}
+
+/**
+ * Loads users using Promises.
+ * @returns {Promise<void>}
+ */
+function seedUsersPromise() {
+    return fs.promises.readFile(
+        path.join(import.meta.dirname, "../priv/users.json"),
+        "utf8"
+    ).then((data) => {
+        users.push(...z
+            .array(userSchema.omit({ id: true }))
+            .parse(JSON.parse(data.toString()))
+            .map(u => ({ id: nextId++, ...u }))
+        );
+    });
+}
+
+/**
+ * Loads users using async/await.
+ * @returns {Promise<void>}
+ */
+async function seedUsersAsync() {
+    const data = await fs.promises.readFile(
+        path.join(import.meta.dirname, "../priv/users.json"),
+        "utf8"
+    );
+
+    users.push(...z
+        .array(userSchema.omit({ id: true }))
+        .parse(JSON.parse(data.toString()))
+        .map(u => ({ id: nextId++, ...u }))
+    );
+}
+
+seedUsersCallback();
 
 /**
  * Finds a user by their username.
