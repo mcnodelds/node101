@@ -6,7 +6,7 @@ import { attach, asyncHandler } from "#utils.js";
  * @typedef {import("#handlers/auth.js").AuthClaims} AuthClaims
  */
 
-/** @typedef {"api" | "client"} AuthMode */
+/** @typedef {"api" | "client" | "ignore"} AuthMode */
 
 /**
  * Type for authorization check function
@@ -29,8 +29,14 @@ import { attach, asyncHandler } from "#utils.js";
  * @param {AuthorizeMiddlewareParams} params - rules to use with authorization
  * @returns {express.Handler} - handler that you can attach to router
  */
-export const authorize = (params) => {
+
+/**
+ *
+ * @param params
+ */
+export function authorize(params) {
     return asyncHandler(async (req, res, next) => {
+        let claims = undefined;
         const mode = params.mode || "api";
         /** @type {string?} */
         let token = null;
@@ -45,14 +51,20 @@ export const authorize = (params) => {
         }
 
         if (!token) {
-            render(res, mode, 401, "Access denied. No token provided.");
+            render(res, mode, 401, "Access denied. No token provided.", next);
             return;
         }
 
-        const claims = await auth.verifyToken(token);
+        claims = await auth.verifyToken(token);
 
         if (!claims) {
-            render(res, mode, 401, "Access denied. Invalid or expired token.");
+            render(
+                res,
+                mode,
+                401,
+                "Access denied. Invalid or expired token.",
+                next
+            );
             return;
         }
 
@@ -67,7 +79,7 @@ export const authorize = (params) => {
         }
 
         if (!isAuthorized) {
-            render(res, mode, 403, "Access denied.");
+            render(res, mode, 403, "Access denied.", next);
             return;
         }
 
@@ -75,7 +87,7 @@ export const authorize = (params) => {
         next();
         return;
     });
-};
+}
 
 /**
  * Sends an appropriate error response based on the authentication mode.
@@ -83,9 +95,10 @@ export const authorize = (params) => {
  * @param {AuthMode} mode - The mode of the request; either "client" (renders an HTML page) or "api" (returns JSON).
  * @param {number} code - The HTTP status code to send with the response (used only in API mode).
  * @param {string} message - The error message to include in the JSON response (used only in API mode).
+ * @param {express.NextFunction} next - The function that will be executed in ignore mode
  * @returns {void}
  */
-function render(res, mode, code, message) {
+function render(res, mode, code, message, next) {
     if (mode == "client") {
         res.render("pages/notfound");
         return;
@@ -95,6 +108,11 @@ function render(res, mode, code, message) {
         res.status(code).json({
             message: message,
         });
+        return;
+    }
+
+    if (mode == "ignore") {
+        next();
         return;
     }
 }
