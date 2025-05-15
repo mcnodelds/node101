@@ -1,4 +1,4 @@
-<% layout("/layouts/base", { title: "Login" }) %>
+<% layout("/layouts/base", { title: "Login", hideHeader: true }) %>
 
 <div class="min-h-screen flex items-center justify-center p-4" x-data="{
     username: '',
