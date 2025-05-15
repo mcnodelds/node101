@@ -24,7 +24,13 @@ router.post(
     "/register",
     validate(registerSchema),
     asyncHandler(async (req, res) => {
-        const { result, error } = await tryCatch(() => auth.register(req.body));
+        const { result, error } = await tryCatch(() =>
+            auth.register(
+                /** @type {import("zod").infer<typeof registerSchema>} */ (
+                    req.body
+                )
+            )
+        );
 
         if (error instanceof auth.AuthError) {
             console.error("Register error:", error);
@@ -61,7 +67,13 @@ router.post(
     "/login",
     validate(loginSchema),
     asyncHandler(async (req, res) => {
-        const { result, error } = await tryCatch(() => auth.login(req.body));
+        const { result, error } = await tryCatch(() =>
+            auth.login(
+                /** @type {import("zod").infer<typeof loginSchema>} */ (
+                    req.body
+                )
+            )
+        );
 
         if (error instanceof auth.AuthError) {
             console.error("Login error:", error);

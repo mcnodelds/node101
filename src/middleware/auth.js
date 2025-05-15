@@ -29,11 +29,6 @@ import { attach, asyncHandler } from "#utils.js";
  * @param {AuthorizeMiddlewareParams} params - rules to use with authorization
  * @returns {express.Handler} - handler that you can attach to router
  */
-
-/**
- *
- * @param params
- */
 export function authorize(params) {
     return asyncHandler(async (req, res, next) => {
         let claims = undefined;

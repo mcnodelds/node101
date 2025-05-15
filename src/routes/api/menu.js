@@ -39,7 +39,10 @@ router.post(
     validate(createItemSchema),
     authorize({ roleWhitelist: ["admin"] }),
     asyncHandler(async (req, res) => {
-        const { name, portion, price, description, imageurl } = req.body;
+        const { name, portion, price, description, imageurl } =
+            /** @type {import("zod").infer<typeof createItemSchema>} */ (
+                req.body
+            );
         const { result: dish, error } = await tryCatch(() =>
             repo.createMenuItem(name, portion, price, description, imageurl)
         );
@@ -105,7 +108,10 @@ router.put(
             return;
         }
 
-        const { name, portion, price, description, imageurl } = req.body;
+        const { name, portion, price, description, imageurl } =
+            /** @type {import("zod").infer<typeof createItemSchema>} */ (
+                req.body
+            );
         const { result: dish, error } = await tryCatch(() =>
             repo.updateMenuItemById(
                 id,
