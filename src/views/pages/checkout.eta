@@ -1,36 +1,162 @@
-<% layout('layouts/base', { title: "чекаут чи чекін я забувся", claims: it?.claims }) %>
+<% layout('layouts/base', { title: "чекаут чи чекін я забувся", hideHeader: false, claims: it?.claims }) %>
 
-<div class="max-w-xl mx-auto p-4">
-  <h1 class="text-2xl font-bold mb-4">Оформлення замовлення</h1>
-  <form id="checkout-form" class="space-y-4">
-    <input type="text" name="name" placeholder="Ім'я" required class="w-full border px-4 py-2 rounded">
-    <input type="text" name="address" placeholder="Адреса" required class="w-full border px-4 py-2 rounded">
-    <input type="tel" name="phone" placeholder="Телефон" required class="w-full border px-4 py-2 rounded">
-    <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Підтвердити замовлення</button>
-  </form>
+<div class="max-w-3xl mx-auto p-4 min-h-screen" x-data="checkout">
+    <h1 class="text-2xl font-bold mb-6 text-center">Оформлення замовлення</h1>
+
+    <div class="card bg-base-100 shadow-xl border p-6">
+        <h2 class="text-xl font-semibold mb-4">Дані для доставки</h2>
+        <form @submit.prevent="submitOrder" class="space-y-4">
+            <div>
+                <label class="label">
+                    <span class="label-text">Ім'я</span>
+                </label>
+                <input 
+                    type="text" 
+                    x-model="form.name" 
+                    placeholder="Ваше ім'я" 
+                    required 
+                    class="input input-bordered w-full" 
+                    :class="{ 'input-error': errors.name }"
+                >
+                <p x-show="errors.name" class="text-error text-sm mt-1" x-text="errors.name"></p>
+            </div>
+            <div>
+                <label class="label">
+                    <span class="label-text">Адреса</span>
+                </label>
+                <input 
+                    type="text" 
+                    x-model="form.address" 
+                    placeholder="Ваша адреса" 
+                    required 
+                    class="input input-bordered w-full" 
+                    :class="{ 'input-error': errors.address }"
+                >
+                <p x-show="errors.address" class="text-error text-sm mt-1" x-text="errors.address"></p>
+            </div>
+            <div>
+                <label class="label">
+                    <span class="label-text">Телефон</span>
+                </label>
+                <input 
+                    type="tel" 
+                    x-model="form.phone" 
+                    placeholder="Ваш телефон" 
+                    required 
+                    class="input input-bordered w-full" 
+                    :class="{ 'input-error': errors.phone }"
+                >
+                <p x-show="errors.phone" class="text-error text-sm mt-1" x-text="errors.phone"></p>
+            </div>
+            <div class="flex space-x-4">
+                <a href="/cart" class="btn btn-outline w-1/2">Повернутися до кошика</a>
+                <button 
+                    type="submit" 
+                    class="btn btn-primary w-1/2" 
+                    :disabled="cart.size === 0 || isSubmitting"
+                >
+                    <span x-show="!isSubmitting">Підтвердити замовлення</span>
+                    <span x-show="isSubmitting" class="loading loading-spinner"></span>
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
-  document.getElementById('checkout-form').addEventListener('submit', (e) => {
-    e.preventDefault();
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('checkout', () => ({
+            cart: new Map(),
+            dishes: {},
+            loading: true,
+            isSubmitting: false,
+            form: {
+                name: '',
+                address: '',
+                phone: ''
+            },
+            errors: {
+                name: '',
+                address: '',
+                phone: ''
+            },
+            async init() {
+                try {
+                    const storedCart = JSON.parse(localStorage.getItem("cart")) || {};
+                    this.cart = new Map(Object.entries(storedCart).map(([id, qty]) => [parseInt(id), parseInt(qty)]));
+                    console.log('Parsed cart:', Object.fromEntries(this.cart));
+                    console.log('Cart size:', this.cart.size);
+                    // Force reactivity
+                    this.cart = new Map(this.cart);
+                } catch (error) {
+                    console.error('Error parsing cart from localStorage:', error);
+                    this.cart = new Map();
+                }
+                this.loading = false;
+            },
+            validateForm() {
+                this.errors = { name: '', address: '', phone: '' };
+                let isValid = true;
 
-    const cart = JSON.parse(localStorage.getItem('cart')) || new Map();
-    if (cart.size == 0) {
-      alert('Кошик порожній!');
-      return;
-    }
+                if (!this.form.name.trim()) {
+                    this.errors.name = "Ім'я є обов'язковим";
+                    isValid = false;
+                }
+                if (!this.form.address.trim()) {
+                    this.errors.address = "Адреса є обов'язковою";
+                    isValid = false;
+                }
+                if (!this.form.phone.trim()) {
+                    this.errors.phone = "Телефон є обов'язковим";
+                    isValid = false;
+                } else if (!/^\+?\d{10,15}$/.test(this.form.phone.replace(/\D/g, ''))) {
+                    this.errors.phone = "Введіть дійсний номер телефону";
+                    isValid = false;
+                }
 
-    const formData = new FormData(e.target);
-    const order = {
-      name: formData.get('name'),
-      address: formData.get('address'),
-      phone: formData.get('phone'),
-      items: cart
-    };
+                return isValid;
+            },
+            async submitOrder() {
+                if (this.cart.size === 0) {
+                    alert('Кошик порожній!');
+                    return;
+                }
 
-    console.log('Замовлення:', order);
-    localStorage.cart = JSON.stringify({});
-    alert('Замовлення оформлено! Дякуємо ❤️');
-    window.location.href = '/';
-  });
+                if (!this.validateForm()) return;
+
+                this.isSubmitting = true;
+                try {
+                    const userId = <%= it?.claims?.id %>;
+                    const body = JSON.stringify({
+                            userId,
+                            items: Object.fromEntries(this.cart),
+                            name: this.form.name,
+                            address: this.form.address,
+                            phone: this.form.phone
+                        });
+                    console.log(body);
+                    const response = await fetch('/api/orders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body,
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.text();
+                        throw new Error(errorData || 'Failed to create order');
+                    }
+                    this.cart = new Map();
+                    localStorage.setItem('cart', JSON.stringify({}));
+                    this.$dispatch('cart-updated');
+                    alert('Замовлення оформлено! Дякуємо ❤️');
+                    window.location.href = '/orders';
+                } catch (error) {
+                    console.error('Checkout error:', error);
+                    alert(`Не вдалося оформити замовлення: ${error.message}`);
+                } finally {
+                    this.isSubmitting = false;
+                }
+            }
+        }));
+    });
 </script>
