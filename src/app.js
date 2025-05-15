@@ -7,6 +7,7 @@ import {
     orderRoutes,
     userRoutes,
     apiRoutes,
+    adminRoutes
 } from "#routes.js";
 import cookieParser from "cookie-parser";
 
@@ -33,6 +34,7 @@ app.use("/", mainRoutes);
 app.use("/user", userRoutes);
 app.use("/orders", orderRoutes);
 app.use("/cart", cartRoutes);
+app.use("/admin", adminRoutes);
 app.use("/api", apiRoutes);
 app.use((_req, res) => {
     res.status(404).render("pages/notfound");
