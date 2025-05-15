@@ -162,3 +162,5 @@ router.delete(
         return;
     })
 );
+
+export default router;

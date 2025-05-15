@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { z } from "zod";
 import { schema as userSchema } from "#models/user.js";
+import { schema as dishSchema } from "#models/dish.js";
 
 /** @typedef {import("zod").infer<typeof userSchema>} User */
 /**
@@ -98,9 +99,93 @@ async function seedUsersAsync() {
     );
 }
 
-// just ignore warnings about unused stuff
-[seedUsersSync, seedUsersAsync, seedUsersPromise];
+/**
+ * Loads menu using sync read.
+ * @returns {void}
+ */
+function seedMenuSync() {
+    const data = fs.readFileSync(
+        path.join(import.meta.dirname, "../priv/menu.json"),
+        "utf-8"
+    );
+    menu.push(
+        ...z
+            .array(dishSchema.omit({ id: true }))
+            .parse(JSON.parse(data))
+            .map((u) => ({ id: nextId++, ...u }))
+    );
+}
+
+/**
+ * Loads menu using callback.
+ * @returns {void}
+ */
+function seedMenuCallback() {
+    fs.readFile(
+        path.join(import.meta.dirname, "../priv/menu.json"),
+        (err, data) => {
+            if (err != null) {
+                throw err;
+            }
+
+            menu.push(
+                ...z
+                    .array(dishSchema.omit({ id: true }))
+                    .parse(JSON.parse(data.toString()))
+                    .map((u) => ({ id: nextId++, ...u }))
+            );
+        }
+    );
+}
+
+/**
+ * Loads menu using Promises.
+ * @returns {Promise<void>}
+ */
+function seedMenuPromise() {
+    return fs.promises
+        .readFile(path.join(import.meta.dirname, "../priv/menu.json"), "utf8")
+        .then((data) => {
+            menu.push(
+                ...z
+                    .array(dishSchema.omit({ id: true }))
+                    .parse(JSON.parse(data.toString()))
+                    .map((u) => ({ id: nextId++, ...u }))
+            );
+        });
+}
+
+/**
+ * Loads users using async/await.
+ * @returns {Promise<void>}
+ */
+async function seedMenuAsync() {
+    const data = await fs.promises.readFile(
+        path.join(import.meta.dirname, "../priv/users.json"),
+        "utf8"
+    );
+
+    menu.push(
+        ...z
+            .array(dishSchema.omit({ id: true }))
+            .parse(JSON.parse(data.toString()))
+            .map((u) => ({ id: nextId++, ...u }))
+    );
+}
+
 seedUsersCallback();
+seedMenuSync();
+
+// just ignore warnings about unused stuff
+[
+    seedUsersSync,
+    seedUsersAsync,
+    seedUsersPromise,
+    seedUsersCallback,
+    seedMenuCallback,
+    seedMenuPromise,
+    seedMenuAsync,
+];
 
 /**
  * Finds a user by their username.

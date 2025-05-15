@@ -8,7 +8,12 @@ export const schema = z.object({
     portion: z.number().positive({ message: "Portion must be above 0." }),
     price: z.number().positive({ message: "Price must be above 0." }),
     description: z.string().min(1, { message: "Description is required." }),
-    imageurl: z.string().url(),
+    imageurl: z.union([
+        z.string().url(),
+        z.string().regex(/^\/(?!\/)[\w\-./]+$/, {
+            message: "Must be a valid relative path starting with '/'",
+        }),
+    ])
 });
 
 export default {
