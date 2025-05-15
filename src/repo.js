@@ -312,12 +312,21 @@ export async function updateMenuItemById(
 }
 
 /**
- * Finds a dish.
+ * Finds a dish by id.
  * @param {number} id - The ID of dish.
  * @returns {Promise<Dish|null>} The dish.
  */
 export async function findMenuItemById(id) {
     return menu.find((dish) => dish.id === id) || null;
+}
+
+/**
+ * Finds a dish by name.
+ * @param {string} name - The ID of dish.
+ * @returns {Promise<Dish|null>} The dish.
+ */
+export async function findMenuItemByName(name) {
+    return menu.find((dish) => dish.name === name) || null;
 }
 
 /**
@@ -354,7 +363,7 @@ export async function createOrder(userId, items, name, address, phone) {
         id: nextId++,
         userId,
         items: validatedItems,
-        status: "processing",
+        status: /** @type {"processing"} */ ("processing"),
         name: validatedName,
         address: validatedAddress,
         phone: validatedPhone,

@@ -39,10 +39,19 @@ router.post(
     validate(createItemSchema),
     authorize({ roleWhitelist: ["admin"] }),
     asyncHandler(async (req, res) => {
-        const { name, portion, price, description, imageurl } =
-            /** @type {import("zod").infer<typeof createItemSchema>} */ (
-                req.body
-            );
+        /** @type {import("zod").infer<typeof createItemSchema>} */
+        const { name, portion, price, description, imageurl } = req.body;
+
+        const { result: existingDish } = await tryCatch(() =>
+            repo.findMenuItemByName(name)
+        );
+        if (existingDish) {
+            res.status(400).json({
+                message: "Menu item with this name already exists.",
+            });
+            return;
+        }
+
         const { result: dish, error } = await tryCatch(() =>
             repo.createMenuItem(name, portion, price, description, imageurl)
         );
