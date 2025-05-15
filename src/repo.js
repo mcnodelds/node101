@@ -367,12 +367,12 @@ export async function createOrder(userId, items, name, address, phone) {
         name: validatedName,
         address: validatedAddress,
         phone: validatedPhone,
+        createdAt: new Date().toISOString(),
     };
 
     orders.push(newOrder);
     return newOrder;
 }
-
 /**
  * Finds an order by its ID.
  * @param {number} id - The ID of the order.

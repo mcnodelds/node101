@@ -1,0 +1,74 @@
+<% layout("/layouts/base", { title: "твої замовлення", hideHeader: true, claims: it?.claims }) %>
+
+<main class="max-w-4xl mx-auto p-6" x-data="ordersView()" x-init="loadOrders">
+  <h1 class="text-3xl font-bold mb-6">Your Orders</h1>
+
+  <template x-if="loading">
+    <div class="flex justify-center">
+      <span class="loading loading-spinner text-primary"></span>
+    </div>
+  </template>
+
+  <template x-if="!loading && orders.length === 0">
+    <p class="text-center text-gray-500">No orders found.</p>
+  </template>
+
+  <div class="grid gap-4" x-show="!loading">
+    <template x-for="order in orders" :key="order.id">
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title">
+            Order #<span x-text="order.id"></span>
+            <span class="badge badge-outline" x-text="order.status"></span>
+          </h2>
+          <p>
+            <strong>Name:</strong> <span x-text="order.name"></span><br />
+            <strong>Address:</strong> <span x-text="order.address"></span><br />
+            <strong>Phone:</strong> <span x-text="order.phone"></span><br />
+            <strong>Created At:</strong>
+            <span
+                x-text="new Date(order.createdAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })"
+            ></span>
+          </p>
+          <div>
+            <strong>Items:</strong>
+            <ul class="list-disc list-inside mt-2">
+              <template x-for="(qty, id) in order.items" :key="id">
+                <li>
+                  Item <span x-text="id"></span>: <span x-text="qty"></span>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</main>
+
+<script>
+  function ordersView() {
+    return {
+      orders: [],
+      loading: true,
+      async loadOrders() {
+        this.loading = true;
+        try {
+          const res = await fetch("/api/orders/user/<%= it?.claims?.id %>", {
+            headers: {
+              "Content-Type": "application/json"
+              // Add auth headers if needed
+            }
+          });
+          if (!res.ok) throw new Error("Failed to fetch");
+          this.orders = await res.json();
+        } catch (err) {
+          console.error("Failed to load orders", err);
+          this.orders = [];
+        } finally {
+          this.loading = false;
+        }
+      }
+    };
+  }
+</script>

@@ -28,6 +28,7 @@ export const schema = z.object({
     phone: z
         .string()
         .regex(/^\+?\d{10,15}$/, { message: "Invalid phone number." }),
+    createdAt: z.string().datetime({ message: "Invalid datetime format." }),
 });
 
 export default {
