@@ -3,19 +3,15 @@ import path from "node:path";
 import { z } from "zod";
 import { schema as userSchema } from "#models/user.js";
 import { schema as dishSchema } from "#models/dish.js";
+import {
+    schema as orderSchema,
+    statusSchema,
+    itemSchema as orderItemSchema,
+} from "#models/order.js";
 /** @typedef {import("zod").infer<typeof userSchema>} User */
-/**
-     @typedef {
-    import("zod").infer<
-        typeof import("#models/role.js").schema
-    >
-} Role */
-/**
-     @typedef {
-        import("zod").infer<
-        typeof import("#models/dish.js").schema
-    >
-} Dish */
+/** @typedef {import("zod").infer<typeof import("#models/role.js").schema>} Role */
+/** @typedef {import("zod").infer<typeof dishSchema>} Dish */
+/** @typedef {import("zod").infer<typeof orderSchema>} Order */
 
 let nextId = 1;
 
@@ -23,6 +19,8 @@ let nextId = 1;
 const users = [];
 /** @type {Dish[]} */
 let menu = [];
+/** @type {Order[]} */
+let orders = [];
 
 /**
  * Loads users using sync read.
@@ -155,12 +153,12 @@ function seedMenuPromise() {
 }
 
 /**
- * Loads users using async/await.
+ * Loads menu using async/await.
  * @returns {Promise<void>}
  */
 async function seedMenuAsync() {
     const data = await fs.promises.readFile(
-        path.join(import.meta.dirname, "../priv/users.json"),
+        path.join(import.meta.dirname, "../priv/menu.json"),
         "utf8"
     );
 
@@ -184,6 +182,7 @@ seedMenuSync();
     seedMenuCallback,
     seedMenuPromise,
     seedMenuAsync,
+    orderSchema,
 ];
 
 /**
@@ -246,7 +245,7 @@ export async function getMenu() {
 /**
  * Creates a new dish.
  * @param {string} name - The name.
- * @param {number} portion - The portion od dish.
+ * @param {number} portion - The portion of dish.
  * @param {number} price - The price of dish.
  * @param {string} description - The description.
  * @param {string} imageurl - The image.
@@ -273,9 +272,9 @@ export async function createMenuItem(
 }
 
 /**
- * Creates a new dish.
+ * Deletes a dish by its ID.
  * @param {number} id - The ID of dish.
- * @returns {Promise<void>} The new dish.
+ * @returns {Promise<void>}
  */
 export async function deleteMenuItemById(id) {
     menu = menu.filter((dish) => dish.id !== id);
@@ -286,7 +285,7 @@ export async function deleteMenuItemById(id) {
  * Changes info about dish.
  * @param {number} id - The ID of dish.
  * @param {string} name - The name.
- * @param {number} portion - The portion od dish.
+ * @param {number} portion - The portion of dish.
  * @param {number} price - The price of dish.
  * @param {string} description - The description.
  * @param {string} imageurl - The image.
@@ -313,13 +312,94 @@ export async function updateMenuItemById(
 }
 
 /**
- * Finds a  dish.
+ * Finds a dish.
  * @param {number} id - The ID of dish.
  * @returns {Promise<Dish|null>} The dish.
  */
 export async function findMenuItemById(id) {
     return menu.find((dish) => dish.id === id) || null;
 }
+
+/**
+ * Creates a new order.
+ * @param {number} userId - The ID of the user.
+ * @param {Map<number, number> | Record<number, number>} items - The items in the order (dish ID to quantity).
+ * @param {string} name - The customer's name.
+ * @param {string} address - The delivery address.
+ * @param {string} phone - The customer's phone number.
+ * @returns {Promise<Order>} The created order.
+ */
+export async function createOrder(userId, items, name, address, phone) {
+    const itemsArray =
+        items instanceof Map
+            ? Array.from(items.entries())
+            : Object.entries(items).map(([id, qty]) => [Number(id), qty]);
+    const validatedItems = z
+        .array(orderItemSchema)
+        .parse(itemsArray.map(([id, quantity]) => ({ id, quantity })));
+    const validatedName = z
+        .string()
+        .min(1, { message: "Name is required." })
+        .parse(name);
+    const validatedAddress = z
+        .string()
+        .min(1, { message: "Address is required." })
+        .parse(address);
+    const validatedPhone = z
+        .string()
+        .regex(/^\+?\d{10,15}$/, { message: "Invalid phone number." })
+        .parse(phone);
+
+    const newOrder = {
+        id: nextId++,
+        userId,
+        items: validatedItems,
+        status: "processing",
+        name: validatedName,
+        address: validatedAddress,
+        phone: validatedPhone,
+    };
+
+    orders.push(newOrder);
+    return newOrder;
+}
+
+/**
+ * Finds an order by its ID.
+ * @param {number} id - The ID of the order.
+ * @returns {Promise<Order|null>} The found order or null.
+ */
+export async function findOrderById(id) {
+    return orders.find((order) => order.id === id) || null;
+}
+
+/**
+ * Finds all orders for a user.
+ * @param {number} userId - The ID of the user.
+ * @returns {Promise<Order[]>} The user's orders.
+ */
+export async function findOrdersByUserId(userId) {
+    return orders.filter((order) => order.userId === userId);
+}
+
+/**
+ * Updates an existing order's status, name, address, and phone.
+ * @param {number} id - The ID of the order.
+ * @param {string} status - The updated status.
+ * @returns {Promise<Order|null>} The updated order or null if not found.
+ */
+export async function updateOrderStatusById(id, status) {
+    let order = orders.find((o) => o.id === id) || null;
+    if (order == null) {
+        return null;
+    }
+
+    const validatedStatus = statusSchema.parse(status);
+
+    order.status = validatedStatus;
+    return order;
+}
+
 export default {
     findUserByUsername,
     findUserById,
@@ -330,4 +410,8 @@ export default {
     deleteMenuItemById,
     updateMenuItemById,
     findMenuItemById,
+    createOrder,
+    findOrderById,
+    findOrdersByUserId,
+    updateOrderStatusById,
 };
