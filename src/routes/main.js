@@ -1,11 +1,18 @@
+import { authorize } from "#middleware/auth.js";
+import { lookup } from "#utils.js";
 import { Router } from "express";
 
 /** @type {Router} */
 const router = Router();
 
-router.get("/", (_req, res) => {
-    res.render("pages/index", { deadline: "2025-12-31T23:59:59" });
-});
+router.get(
+    "/",
+    authorize({ mode: "ignore", check: () => true }),
+    (req, res) => {
+        const claims = lookup(req, "claims");
+        res.render("pages/index", { claims });
+    }
+);
 
 /**
  * @typedef {{

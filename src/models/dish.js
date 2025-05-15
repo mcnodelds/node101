@@ -13,7 +13,7 @@ export const schema = z.object({
         z.string().regex(/^\/(?!\/)[\w\-./]+$/, {
             message: "Must be a valid relative path starting with '/'",
         }),
-    ])
+    ]),
 });
 
 export default {

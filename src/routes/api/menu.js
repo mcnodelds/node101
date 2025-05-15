@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get(
     "/",
-    asyncHandler(async (req, res) => {
+    asyncHandler(async (_req, res) => {
         const { result: menu, error } = await tryCatch(repo.getMenu);
 
         if (error != null) {

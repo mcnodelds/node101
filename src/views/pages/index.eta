@@ -1,118 +1,130 @@
-<% layout("/layouts/base", { title: "Mcnodelds: student's food" }) %>
-
-<!-- Інфопанель -->
-<header class="fixed top-0 left-0 w-full z-50 bg-black/60 backdrop-blur-md text-white">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-    <!-- Логотип -->
-    <div class="flex items-center gap-3">
-      <img src="https://img.daisyui.com/images/stock/photo-1559181567-c3190ca9959b.webp" alt="Logo" class="w-10 h-10 object-cover rounded-full shadow" />
-      <span class="text-xl font-bold tracking-wide">Mcnodelds</span>
-    </div>
-
-    <!-- Навігація -->
-    <nav class="space-x-6 text-sm md:text-base">
-      <a href="/about" class="hover:underline transition">About us</a>
-      <a href="/help" class="hover:underline transition">Get help (now)</a>
-      <a href="/privacy" class="hover:underline transition">Privacy policy</a>
-    </nav>
-  </div>
-</header>
+<% layout("/layouts/base", { title: "Mcnodelds: student's food", claims: it.claims }) %>
 
 <div
-    x-data="{ showCarousel: false, selectedDish: null, menuItems: [] }"
-    x-init="fetch('http://localhost:3000/api/menu')
-      .then(response => response.json())
-      .then(data => menuItems = data)
-      .catch(error => console.error('Error fetching menu:', error))"
+    x-data="{
+        showCarousel: false,
+        selectedDish: null,
+        menuItems: [],
+        cart: new Map(),
+        init() {
+            // Load cart from localStorage
+            const storedCart = JSON.parse(localStorage.getItem('cart')) || {};
+            this.cart = new Map(Object.entries(storedCart).map(([id, qty]) => [id, parseInt(qty)]));
+            // Fetch menu items
+            fetch('http://localhost:3000/api/menu')
+                .then(response => response.json())
+                .then(data => this.menuItems = data)
+                .catch(error => console.error('Error fetching menu:', error));
+        },
+        addToCart(id) {
+            const quantity = this.cart.get(id) || 0;
+            this.cart.set(id, quantity + 1);
+            localStorage.setItem('cart', JSON.stringify(Object.fromEntries(this.cart)));
+            this.$dispatch('cart-updated');
+        }
+    }"
 >
-  <section 
-    class="relative w-full h-screen pt-24 bg-cover bg-center flex justify-center items-center text-white text-center px-4 overflow-hidden"
-  >
-    <div class="absolute inset-0 bg-black/50 z-0"></div>
-
-    <div 
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10"
-      x-show="!showCarousel && !selectedDish"
-      x-transition:enter="transition-opacity duration-700 ease-in-out"
-      x-transition:enter-start="opacity-0"
-      x-transition:enter-end="opacity-100"
-      x-transition:leave="transition-opacity duration-700 ease-in-out"
-      x-transition:leave-start="opacity-100"
-      x-transition:leave-end="opacity-0"
+    <section 
+        class="relative w-full h-screen pt-24 bg-cover bg-center flex justify-center items-center text-white text-center px-4 overflow-hidden"
     >
-      <h1 class="text-5xl md:text-7xl font-bold mb-6 drop-shadow-lg">
-        Смачного, скотина.
-      </h1>
-      <p class="text-xl md:text-2xl max-w-xl mx-auto mb-6 drop-shadow">
-        Я не питаю ЩО ти будеш їсти, я спитав чи будеш ти їсти в принципі, курво.
-      </p>
-      <button
-        class="btn btn-primary text-lg px-8 py-3"
-        @click="showCarousel = true"
-        x-show="!showCarousel"
-        x-transition
-      >
-        Ілюзія вибору
-      </button>
-    </div>
+        <div class="absolute inset-0 bg-black/50 z-0"></div>
 
-    <!-- Карусель -->
-    <div 
-      x-show="showCarousel && !selectedDish"
-      x-transition:enter="transition ease-in-out duration-1000"
-      x-transition:enter-start="opacity-0 translate-y-16"
-      x-transition:enter-end="opacity-100 translate-y-0"
-      x-transition:leave="transition ease-in-out duration-700"
-      x-transition:leave-start="opacity-100 translate-y-0"
-      x-transition:leave-end="opacity-0 translate-y-16"
-      class="relative z-10 w-full max-w-6xl mx-auto"
-    >
-      <h2 class="text-3xl font-bold text-white mb-6">Популярні страви</h2>
-      <div class="carousel carousel-center rounded-box space-x-4 p-4 bg-white/10 backdrop-blur-md rounded-xl transition-all duration-700">
-        <template x-for="(item, index) in menuItems" :key="item.id">
-          <div 
-            class="carousel-item flex flex-col items-center cursor-pointer transition-all duration-700 transform hover:scale-105"
-            @click="selectedDish = { index: index + 1, img: item.imageurl, title: item.name, desc: item.description, price: item.price, portion: item.portion }"
-          >
-            <img :src="item.imageurl" class="w-40 h-40 object-cover rounded-xl shadow-md" :alt="item.name" />
-            <p class="mt-2 text-white font-medium" x-text="item.name"></p>
-          </div>
-        </template>
-      </div>
-
-      <!-- Кнопка "Сховати" -->
-      <div class="flex justify-center mt-8">
-        <button
-          class="btn btn-outline text-lg px-8 py-3"
-          @click="showCarousel = false"
+        <div 
+            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10"
+            x-show="!showCarousel && !selectedDish"
+            x-transition:enter="transition-opacity duration-700 ease-in-out"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity duration-700 ease-in-out"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
         >
-          Сховати
-        </button>
-      </div>
-    </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 drop-shadow-lg">
+                Смачного, скотина.
+            </h1>
+            <p class="text-xl md:text-2xl max-w-xl mx-auto mb-6 drop-shadow">
+                Я не питаю ЩО ти будеш їсти, я спитав чи будеш ти їсти в принципі, курво.
+            </p>
+            <button
+                class="btn btn-primary text-lg px-8 py-3"
+                @click="showCarousel = true"
+                x-show="!showCarousel"
+                x-transition
+            >
+                Ілюзія вибору
+            </button>
+        </div>
 
-    <!-- Детальний перегляд страви -->
-    <div 
-      x-show="selectedDish"
-      x-transition:enter="transition ease-in-out duration-700"
-      x-transition:enter-start="opacity-0 scale-95"
-      x-transition:enter-end="opacity-100 scale-100"
-      x-transition:leave="transition ease-in-out duration-500"
-      x-transition:leave-start="opacity-100 scale-100"
-      x-transition:leave-end="opacity-0 scale-95"
-      class="absolute inset-0 flex flex-col justify-center items-center text-center z-20 bg-black/70 backdrop-blur"
-    >
-      <img :src="selectedDish.img" alt="" class="w-64 h-64 object-cover rounded-2xl shadow-lg mb-6" />
-      <h3 class="text-4xl font-bold mb-2" x-text="selectedDish.title"></h3>
-      <p class="text-lg max-w-xl mb-2" x-text="selectedDish.desc"></p>
-      <p class="text-lg mb-2" x-text="'Порція: ' + selectedDish.portion + 'г'"></p>
-      <p class="text-lg mb-6" x-text="'Ціна: ' + selectedDish.price + ' грн'"></p>
-      <button
-        class="btn btn-primary px-6 py-2"
-        @click="selectedDish = null"
-      >
-        Повернутися
-      </button>
-    </div>
-  </section>
+        <!-- Карусель -->
+        <div 
+            x-show="showCarousel && !selectedDish"
+            x-transition:enter="transition ease-in-out duration-1000"
+            x-transition:enter-start="opacity-0 translate-y-16"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in-out duration-700"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 translate-y-16"
+            class="relative z-10 w-full max-w-6xl mx-auto"
+        >
+            <h2 class="text-3xl font-bold text-white mb-6">Популярні страви</h2>
+            <div class="carousel carousel-center rounded-box space-x-4 p-4 bg-white/10 backdrop-blur-md rounded-xl transition-all duration-700">
+                <template x-for="(item, index) in menuItems" :key="item.id">
+                    <div 
+                        class="carousel-item flex flex-col items-center cursor-pointer transition-all duration-700 transform hover:scale-105"
+                        @click="selectedDish = { id: item.id, index: index + 1, img: item.imageurl, title: item.name, desc: item.description, price: item.price, portion: item.portion }"
+                    >
+                        <img :src="item.imageurl" class="w-40 h-40 object-cover rounded-xl shadow-md" :alt="item.name" />
+                        <p class="mt-2 text-white font-medium" x-text="item.name"></p>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Кнопка "Сховати" -->
+            <div class="flex justify-center mt-8">
+                <button
+                    class="btn btn-outline text-lg px-8 py-3"
+                    @click="showCarousel = false"
+                >
+                    Сховати
+                </button>
+            </div>
+        </div>
+
+        <!-- Детальний перегляд страви -->
+        <div 
+            x-show="selectedDish"
+            x-transition:enter="transition ease-in-out duration-700"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in-out duration-500"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="absolute inset-0 flex flex-col justify-center items-center text-center z-20 bg-black/70 backdrop-blur"
+        >
+            <img :src="selectedDish.img" alt="" class="w-64 h-64 object-cover rounded-2xl shadow-lg mb-6" />
+            <h3 class="text-4xl font-bold mb-2" x-text="selectedDish.title"></h3>
+            <p class="text-lg max-w-xl mb-2" x-text="selectedDish.desc"></p>
+            <p class="text-lg mb-2" x-text="'Порція: ' + selectedDish.portion + 'г'"></p>
+            <p class="text-lg mb-6" x-text="'Ціна: ' + selectedDish.price + ' грн'"></p>
+            <% if (it.claims != undefined) { %>
+                <button 
+                    class="btn btn-primary px-6 py-2"
+                    @click="addToCart(selectedDish.id)"
+                >
+                    Додати в кошик
+                </button>
+            <% } %>
+            <% if (it?.claims?.role == "admin") { %>
+                <button class="btn btn-primary px-6 py-2">
+                    Перейти на сторінку редагування
+                </button>
+            <% } %>
+            <button
+                class="btn btn-primary px-6 py-2"
+                @click="selectedDish = null"
+            >
+                Повернутися
+            </button>
+        </div>
+    </section>
 </div>

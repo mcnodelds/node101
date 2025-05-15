@@ -3,7 +3,6 @@ import path from "node:path";
 import { z } from "zod";
 import { schema as userSchema } from "#models/user.js";
 import { schema as dishSchema } from "#models/dish.js";
-
 /** @typedef {import("zod").infer<typeof userSchema>} User */
 /**
      @typedef {
