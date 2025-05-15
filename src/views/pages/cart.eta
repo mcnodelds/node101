@@ -1,0 +1,71 @@
+<% layout('layouts/base') %>
+
+<div class="max-w-3xl mx-auto p-4">
+  <h1 class="text-2xl font-bold mb-4">Кошик</h1>
+  <div id="cart-items" class="space-y-4">
+    <p class="text-gray-500">Завантаження кошика...</p>
+  </div>
+  <div class="text-right mt-4">
+    <p class="text-lg font-semibold">Загальна сума: <span id="total-price">0₴</span></p>
+    <a href="/cart/checkout" class="inline-block mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Оформити замовлення</a>
+  </div>
+</div>
+
+<script>
+  const cartItemsContainer = document.getElementById('cart-items');
+  const totalPriceElement = document.getElementById('total-price');
+
+  function loadCart() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cartItemsContainer.innerHTML = '';
+    let total = 0;
+
+    if (cart.length === 0) {
+      cartItemsContainer.innerHTML = '<p class="text-gray-500">Кошик порожній</p>';
+      totalPriceElement.textContent = '0₴';
+      return;
+    }
+
+    cart.forEach((item, index) => {
+      const itemTotal = item.price * item.quantity;
+      total += itemTotal;
+
+      const itemEl = document.createElement('div');
+      itemEl.className = "border p-4 rounded shadow";
+      itemEl.innerHTML =
+        '<h2 class="text-xl font-semibold">' + item.name + '</h2>' +
+        '<p>Ціна: ' + item.price + '₴</p>' +
+        '<div class="flex items-center mt-2">' +
+          '<label class="mr-2">Кількість:</label>' +
+          '<input type="number" min="1" value="' + item.quantity + '" data-index="' + index + '" class="quantity-input w-16 border px-2 py-1 mr-4">' +
+          '<button data-index="' + index + '" class="remove-btn bg-red-500 text-white px-3 py-1 rounded">Видалити</button>' +
+        '</div>';
+
+      cartItemsContainer.appendChild(itemEl);
+    });
+
+    totalPriceElement.textContent = total + '₴';
+  }
+
+  cartItemsContainer.addEventListener('input', (e) => {
+    if (e.target.classList.contains('quantity-input')) {
+      const index = e.target.dataset.index;
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart[index].quantity = parseInt(e.target.value) || 1;
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCart();
+    }
+  });
+
+  cartItemsContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove-btn')) {
+      const index = e.target.dataset.index;
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCart();
+    }
+  });
+
+  loadCart();
+</script>

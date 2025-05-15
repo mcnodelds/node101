@@ -4,11 +4,11 @@ import { Router } from "express";
 const router = Router();
 
 router.get("/", (_req, res) => {
-    res.render("cart", {});
+    res.render("pages/cart", {});
 });
 
 router.get("/checkout", (_req, res) => {
-    res.render("checkout", {});
+    res.render("pages/checkout", {});
 });
 
 export default router;
