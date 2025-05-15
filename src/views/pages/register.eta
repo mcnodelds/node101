@@ -1,21 +1,65 @@
 <% layout("/layouts/base", { title: "Register" }) %>
 
-<div class="min-h-screen flex items-center justify-center p-4">
+<div class="min-h-screen flex items-center justify-center p-4" x-data="{
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    errorMessage: '',
+    successMessage: '',
+    async submitForm() {
+        this.errorMessage = '';
+        this.successMessage = '';
+        
+        if (this.password !== this.confirmPassword) {
+            this.errorMessage = 'Passwords do not match.';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    username: this.username,
+                    email: this.email,
+                    password: this.password
+                }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.token) {
+                this.successMessage = 'Success!';
+                localStorage.setItem('authToken', result.token);
+                window.location.pathname = '/';
+            } else {
+                this.errorMessage = result.message || 'Registration failed. Please try again.';
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            this.errorMessage = 'An error occurred during registration. Please try again.';
+        }
+    }
+}">
     <div class="max-w-md w-full bg-base-200 rounded-lg shadow-lg p-8">
         <h2 class="text-3xl font-bold text-center mb-6 font-grenze">Register</h2>
-        <form id="register-form">
-
+        <form x-on:submit.prevent="submitForm">
             <div class="mb-4">
                 <label for="username" class="block text-sm font-medium mb-2">Username</label>
                 <input
                     type="text"
                     id="username"
-                    name="username" <% /* Important: 'name' attribute must match schema */ %>
+                    name="username"
                     required
-                    minlength="3" <% /* Match schema validation */ %>
-                    maxlength="32" <% /* Match schema validation */ %>
+                    minlength="3"
+                    maxlength="32"
                     class="input input-bordered w-full"
                     placeholder="Choose a username (3-32 chars)"
+                    x-model="username"
                 />
             </div>
 
@@ -28,8 +72,10 @@
                     required
                     class="input input-bordered w-full"
                     placeholder="your@email.com"
+                    x-model="email"
                 />
             </div>
+
             <div class="mb-4">
                 <label for="password" class="block text-sm font-medium mb-2">Password</label>
                 <input
@@ -37,13 +83,15 @@
                     id="password"
                     name="password"
                     required
-                    minlength="6"  <% /* Updated placeholder based on schema */ %>
+                    minlength="6"
                     class="input input-bordered w-full"
                     placeholder="Create a password (min 6 chars)"
+                    x-model="password"
                 />
             </div>
+
             <div class="mb-6">
-                 <label for="confirmPassword" class="block text-sm font-medium mb-2">Confirm Password</label>
+                <label for="confirmPassword" class="block text-sm font-medium mb-2">Confirm Password</label>
                 <input
                     type="password"
                     id="confirmPassword"
@@ -51,14 +99,24 @@
                     required
                     class="input input-bordered w-full"
                     placeholder="Confirm your password"
+                    x-model="confirmPassword"
                 />
             </div>
+
             <div class="mb-6">
                 <button type="submit" class="btn btn-primary w-full">Register</button>
             </div>
 
-            <div id="error-message" class="alert alert-error alert-soft text-center hidden"></div>
-            <div id="success-message" class="alert alert-success alert-soft text-center hidden"></div>
+            <div
+                class="alert alert-error alert-soft text-center"
+                x-show="errorMessage"
+                x-text="errorMessage"
+            ></div>
+            <div
+                class="alert alert-success alert-soft text-center"
+                x-show="successMessage"
+                x-text="successMessage"
+            ></div>
 
             <p class="text-center text-sm">
                 Already have an account?
@@ -67,60 +125,3 @@
         </form>
     </div>
 </div>
-
-<script>
-    const registerForm = document.getElementById("register-form");
-    const errorMessageDiv = document.getElementById("error-message");
-    const successMessageDiv = document.getElementById("success-message");
-    const passwordInput = document.getElementById("password");
-    const confirmPasswordInput = document.getElementById("confirmPassword");
-
-
-    registerForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        errorMessageDiv.classList.add("hidden");
-        successMessageDiv.classList.add("hidden");
-        errorMessageDiv.textContent = '';
-        successMessageDiv.textContent = '';
-
-
-        if (passwordInput.value !== confirmPasswordInput.value) {
-            errorMessageDiv.textContent = 'Passwords do not match.';
-            errorMessageDiv.classList.remove("hidden");
-            return;
-        }
-
-        const formData = new FormData(registerForm);
-        formData.delete('confirmPassword');
-        const data = Object.fromEntries(formData.entries());
-
-
-        try {
-            const response = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify(data),
-            });
-
-            const result = await response.json();
-
-            if (response.ok && result.token) {
-                successMessageDiv.textContent = "Success!";
-                successMessageDiv.classList.remove("hidden");
-                localStorage.setItem('authToken', result.token);
-                window.location.pathname = "/";
-            } else {
-                errorMessageDiv.textContent = result.message
-                    || 'Registration failed. Please try again.';
-                errorMessageDiv.classList.remove("hidden");
-            }
-        } catch (error) {
-            console.error('Registration error:', error);
-            errorMessageDiv.textContent = 'An error occurred during registration. Please try again.';
-            errorMessageDiv.classList.remove("hidden");
-        }
-    });
-</script>

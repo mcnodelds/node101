@@ -1,9 +1,44 @@
 <% layout("/layouts/base", { title: "Login" }) %>
 
-<div class="min-h-screen flex items-center justify-center p-4">
+<div class="min-h-screen flex items-center justify-center p-4" x-data="{
+    username: '',
+    password: '',
+    errorMessage: '',
+    successMessage: '',
+    async submitForm() {
+        this.errorMessage = '';
+        this.successMessage = '';
+        
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    username: this.username,
+                    password: this.password
+                }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.token) {
+                this.successMessage = 'Success!';
+                window.location.pathname = '/';
+            } else {
+                this.errorMessage = result.message || 'Login failed. Please check your username and password.';
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            this.errorMessage = 'An error occurred during login. Please try again.';
+        }
+    }
+}">
     <div class="max-w-md w-full bg-base-200 rounded-lg shadow-lg p-8">
         <h2 class="text-3xl font-bold text-center mb-6 font-grenze">Login</h2>
-        <form id="login-form">
+        <form x-on:submit.prevent="submitForm">
             <div class="mb-4">
                 <label for="username" class="block text-sm font-medium mb-2">Username</label>
                 <input
@@ -14,6 +49,7 @@
                     minlength="3"
                     class="input input-bordered w-full"
                     placeholder="Enter your username"
+                    x-model="username"
                 />
             </div>
 
@@ -27,14 +63,23 @@
                     minlength="6"
                     class="input input-bordered w-full"
                     placeholder="Enter your password"
+                    x-model="password"
                 />
             </div>
             <div class="mb-6">
                 <button type="submit" class="btn btn-primary w-full">Login</button>
             </div>
 
-            <div id="error-message" class="alert alert-error alert-soft text-center hidden"></div>
-            <div id="success-message" class="alert alert-success alert-soft text-center hidden"></div>
+            <div
+                class="alert alert-error alert-soft text-center"
+                x-show="errorMessage"
+                x-text="errorMessage"
+            ></div>
+            <div
+                class="alert alert-success alert-soft text-center"
+                x-show="successMessage"
+                x-text="successMessage"
+            ></div>
 
             <p class="text-center text-sm">
                 Don't have an account?
@@ -43,48 +88,3 @@
         </form>
     </div>
 </div>
-
-<script>
-    const loginForm = document.getElementById("login-form");
-    const successMessageDiv = document.getElementById("success-message");
-    const errorMessageDiv = document.getElementById("error-message");
-
-    loginForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        errorMessageDiv.classList.add("hidden"); // Hide previous errors
-        errorMessageDiv.textContent = '';
-        successMessageDiv.classList.add("hidden");
-        successMessageDiv.textContent = '';
-
-        const formData = new FormData(loginForm);
-        const data = Object.fromEntries(formData.entries());
-
-        try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify(data),
-            });
-
-            const result = await response.json();
-
-            if (response.ok && result.token) {
-                successMessageDiv.textContent = "Success!";
-                successMessageDiv.classList.remove("hidden");
-                localStorage.setItem('authToken', result.token);
-                window.location.pathname = "/";
-            } else {
-                errorMessageDiv.textContent = result.message
-                    || 'Login failed. Please check your username and password.';
-                errorMessageDiv.classList.remove("hidden");
-            }
-        } catch (error) {
-            console.error('Login error:', error);
-            errorMessageDiv.textContent = 'An error occurred during login. Please try again.';
-            errorMessageDiv.classList.remove("hidden");
-        }
-    });
-</script>
