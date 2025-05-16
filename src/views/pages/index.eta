@@ -1,32 +1,7 @@
 <% layout("/layouts/base", { title: "Mcnodelds: student's food", claims: it.claims }) %>
 
-<div
-    x-data="{
-        showCarousel: false,
-        selectedDish: null,
-        menuItems: [],
-        cart: new Map(),
-        init() {
-            // Load cart from localStorage
-            const storedCart = JSON.parse(localStorage.getItem('cart')) || {};
-            this.cart = new Map(Object.entries(storedCart).map(([id, qty]) => [id, parseInt(qty)]));
-            // Fetch menu items
-            fetch('http://localhost:3000/api/menu')
-                .then(response => response.json())
-                .then(data => this.menuItems = data)
-                .catch(error => console.error('Error fetching menu:', error));
-        },
-        addToCart(id) {
-            const quantity = this.cart.get(id) || 0;
-            this.cart.set(id, quantity + 1);
-            localStorage.setItem('cart', JSON.stringify(Object.fromEntries(this.cart)));
-            this.$dispatch('cart-updated');
-        }
-    }"
->
-    <section 
-        class="relative w-full h-screen pt-24 bg-cover bg-center flex justify-center items-center text-white text-center px-4 overflow-hidden"
-    >
+<div x-data="mainPageView()">
+    <section class="relative w-full h-screen pt-24 bg-cover bg-center flex justify-center items-center text-white text-center px-4 overflow-hidden">
         <div class="absolute inset-0 bg-black/50 z-0"></div>
 
         <div 
@@ -55,7 +30,6 @@
             </button>
         </div>
 
-        <!-- Карусель -->
         <div 
             x-show="showCarousel && !selectedDish"
             x-transition:enter="transition ease-in-out duration-1000"
@@ -79,7 +53,6 @@
                 </template>
             </div>
 
-            <!-- Кнопка "Сховати" -->
             <div class="flex justify-center mt-8">
                 <button
                     class="btn btn-outline text-lg px-8 py-3"
@@ -90,7 +63,6 @@
             </div>
         </div>
 
-        <!-- Детальний перегляд страви -->
         <div 
             x-show="selectedDish"
             x-transition:enter="transition ease-in-out duration-700"
@@ -106,25 +78,47 @@
             <p class="text-lg max-w-xl mb-2" x-text="selectedDish.desc"></p>
             <p class="text-lg mb-2" x-text="'Порція: ' + selectedDish.portion + 'г'"></p>
             <p class="text-lg mb-6" x-text="'Ціна: ' + selectedDish.price + ' грн'"></p>
-            <% if (it.claims != undefined) { %>
-                <button 
+            <div class="space-x-2">
+                <% if (it.claims != undefined) { %>
+                    <button 
+                        class="btn btn-primary px-6 py-2"
+                        @click="addToCart(selectedDish.id)"
+                    >
+                        Додати в кошик
+                    </button>
+                <% } %>
+                <button
                     class="btn btn-primary px-6 py-2"
-                    @click="addToCart(selectedDish.id)"
+                    @click="selectedDish = null"
                 >
-                    Додати в кошик
+                    Повернутися
                 </button>
-            <% } %>
-            <% if (it?.claims?.role == "admin") { %>
-                <button class="btn btn-primary px-6 py-2">
-                    Перейти на сторінку редагування
-                </button>
-            <% } %>
-            <button
-                class="btn btn-primary px-6 py-2"
-                @click="selectedDish = null"
-            >
-                Повернутися
-            </button>
+            </div>
         </div>
     </section>
 </div>
+
+<script>
+    function mainPageView() {
+        return {
+            showCarousel: false,
+            selectedDish: null,
+            menuItems: [],
+            cart: new Map(),
+            init() {
+                const storedCart = JSON.parse(localStorage.getItem('cart')) || {};
+                this.cart = new Map(Object.entries(storedCart).map(([id, qty]) => [id, parseInt(qty)]));
+                fetch('http://localhost:3000/api/menu')
+                    .then(response => response.json())
+                    .then(data => this.menuItems = data)
+                    .catch(error => console.error('Error fetching menu:', error));
+            },
+            addToCart(id) {
+                const quantity = this.cart.get(id) || 0;
+                this.cart.set(id, quantity + 1);
+                localStorage.setItem('cart', JSON.stringify(Object.fromEntries(this.cart)));
+                this.$dispatch('cart-updated');
+            }
+        };
+    }
+</script>

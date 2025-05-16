@@ -1,7 +1,7 @@
 <% layout("/layouts/base", { title: "твої замовлення", claims: it?.claims }) %>
 
 <main class="max-w-4xl mx-auto p-6 min-h-screen" x-data="ordersView()" x-init="loadOrders">
-  <h1 class="text-3xl font-bold mb-6">Your Orders</h1>
+  <h1 class="text-3xl font-bold mb-6 font-grenze text-center">Your Orders</h1>
 
   <template x-if="loading">
     <div class="flex justify-center">

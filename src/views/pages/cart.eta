@@ -1,7 +1,7 @@
 <% layout('layouts/base', { title: "кошик з їжею <3", hideHeader: true }) %>
 
-<div class="max-w-3xl mx-auto p-4 min-h-screen" x-data="cart">
-    <h1 class="text-2xl font-bold mb-4 text-center">Кошик</h1>
+<div class="max-w-3xl mx-auto p-4 min-h-screen" x-data="cartView()">
+    <h1 class="text-2xl font-bold mb-4 text-center font-grenze">Cart</h1>
     <div class="space-y-4">
         <template x-if="loading">
             <p class="text-gray-500">Завантаження кошика...</p> </template>
@@ -50,8 +50,8 @@
 </div>
 
 <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('cart', () => ({
+    function cartView() {
+        return {
             cart: new Map(),
             dishes: {},
             loading: true,
@@ -94,6 +94,6 @@
                 localStorage.setItem('cart', JSON.stringify(Object.fromEntries(this.cart)));
                 this.$dispatch('cart-updated');
             }
-        }));
-    });
+        };
+    }
 </script>
