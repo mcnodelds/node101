@@ -7,7 +7,7 @@ import {
     orderRoutes,
     userRoutes,
     apiRoutes,
-    adminRoutes
+    adminRoutes,
 } from "#routes.js";
 import cookieParser from "cookie-parser";
 
