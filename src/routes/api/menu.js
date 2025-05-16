@@ -40,10 +40,10 @@ router.post(
     authorize({ roleWhitelist: ["admin"] }),
     asyncHandler(async (req, res) => {
         /** @type {import("zod").infer<typeof createItemSchema>} */
-        const { name, portion, price, description, imageurl } = req.body;
+        const item = req.body;
 
         const { result: existingDish } = await tryCatch(() =>
-            repo.findMenuItemByName(name)
+            repo.findMenuItemByName(item.name)
         );
         if (existingDish) {
             res.status(400).json({
@@ -53,7 +53,7 @@ router.post(
         }
 
         const { result: dish, error } = await tryCatch(() =>
-            repo.createMenuItem(name, portion, price, description, imageurl)
+            repo.createMenuItem(item)
         );
 
         if (error != null) {
@@ -117,19 +117,10 @@ router.put(
             return;
         }
 
-        const { name, portion, price, description, imageurl } =
-            /** @type {import("zod").infer<typeof createItemSchema>} */ (
-                req.body
-            );
+        /** @type {import("zod").infer<typeof createItemSchema>} */ 
+        const item = req.body;
         const { result: dish, error } = await tryCatch(() =>
-            repo.updateMenuItemById(
-                id,
-                name,
-                portion,
-                price,
-                description,
-                imageurl
-            )
+            repo.updateMenuItemById(id, item)
         );
 
         if (error != null) {
