@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+/** @typedef {z.infer<typeof statusSchema>} OrderStatus */
 /** @typedef {z.infer<typeof schema>} Order */
 
 export const statusSchema = z.enum([

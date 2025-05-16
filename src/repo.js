@@ -1,229 +1,570 @@
-// src/repo.js
+import { z } from "zod";
+import { tryCatch } from "#utils.js";
+import { schema as userSchema } from "#models/user.js";
+import { schema as dishSchema } from "#models/dish.js";
+import {
+    schema as orderSchema,
+    statusSchema,
+    itemSchema as orderItemSchema,
+} from "#models/order.js";
+import { users, orders, orderItems, dishes } from "#db/schema.js";
 import { db } from "#db/client.js";
 import { eq } from "drizzle-orm";
-import {
-  users,
-  dishes,
-  orders,
-  orderItems,
-} from "#db/schema.js";
-import userModel from "#models/user.js";
-import dishModel from "#models/dish.js";
-import { tryCatch } from "#utils.js";
+
+/** @typedef {import("zod").infer<typeof userSchema>} User */
+/** @typedef {import("zod").infer<typeof import("#models/role.js").schema>} UserRole */
+/** @typedef {import("zod").infer<typeof dishSchema>} Dish */
+/** @typedef {import("zod").infer<typeof import("#models/order.js").statusSchema>} OrderStatus */
+/** @typedef {import("zod").infer<typeof orderSchema>} Order */
 
 /**
- * @typedef {import("#models/user.js").User} User
- * @typedef {import("#models/dish.js").Dish} Dish
- */
-
-/**
- * Finds a user by username.
- * @param {string} username
- * @returns {Promise<User|null>}
+ * Finds a user by their username.
+ * @param {string} username - The username to search for.
+ * @returns {Promise<User|null>} The found user or null.
  */
 export async function findUserByUsername(username) {
-  const { result, error } = await tryCatch(() =>
-    db.select().from(users).where(eq(users.username, username))
-  );
-  if (error != null) throw error;
-  const raw = result[0];
-  if (!raw) return null;
-  return userModel.schema.parse(raw);
+    const { result, error } = await tryCatch(async () => {
+        const result = await db
+            .select({
+                id: users.id,
+                username: users.username,
+                passwordHash: users.passwordHash,
+                email: users.email,
+                role: users.role,
+            })
+            .from(users)
+            .where(eq(users.username, username))
+            .limit(1);
+
+        const user = result[0];
+        if (!user) return null;
+        return userSchema.parse(user);
+    });
+    if (error) throw error;
+    return result;
+}
+
+/**
+ * Finds a user by their ID.
+ * @param {number} id - The ID of the user.
+ * @returns {Promise<User|null>} The found user or null.
+ */
+export async function findUserById(id) {
+    const { result, error } = await tryCatch(async () => {
+        const result = await db
+            .select({
+                id: users.id,
+                username: users.username,
+                passwordHash: users.passwordHash,
+                email: users.email,
+                role: users.role,
+            })
+            .from(users)
+            .where(eq(users.id, id))
+            .limit(1);
+
+        const user = result[0];
+        if (!user) return null;
+        return userSchema.parse(user);
+    });
+    if (error) throw error;
+    return result;
 }
 
 /**
  * Creates a new user.
- * @param {string} username
- * @param {string} passwordHash
- * @param {string} role
- * @param {string|null|undefined} email
- * @returns {Promise<User>}
+ * @param {string} username - The username.
+ * @param {string} passwordHash - The hashed password.
+ * @param {UserRole} role - The user's role.
+ * @param {string|null} [email] - The user's email (optional).
+ * @returns {Promise<User>} The created user.
  */
-export async function createUser(username, passwordHash, role, email) {
-  const { result, error } = await tryCatch(() =>
-    db
-      .insert(users)
-      .values({ username, passwordHash, role, email })
-      .returning()
-  );
-  if (error != null) throw error;
-  return userModel.schema.parse(result[0]);
+export async function createUser(username, passwordHash, role, email = null) {
+    const { result, error } = await tryCatch(async () => {
+        const result = await db.transaction(async (tx) =>
+            tx
+                .insert(users)
+                .values({
+                    username,
+                    passwordHash,
+                    role: role,
+                    email,
+                })
+                .returning({
+                    id: users.id,
+                    username: users.username,
+                    passwordHash: users.passwordHash,
+                    email: users.email,
+                    role: users.role,
+                })
+        )
+
+        const user = result[0];
+        return userSchema.parse(user);
+    });
+    if (error) throw error;
+    return result;
 }
 
 /**
- * Fetches all dishes (menu items).
- * @returns {Promise<Dish[]>}
+ * Returns whole menu
+ * @returns {Promise<Dish[]>} The menu itself.
  */
 export async function getMenu() {
-  const { result, error } = await tryCatch(() => db.select().from(dishes));
-  if (error != null) throw error;
-  return result.map((row) => dishModel.schema.parse(row));
+    const { result, error } = await tryCatch(async () => {
+        const result = await db
+            .select({
+                id: dishes.id,
+                name: dishes.name,
+                portion: dishes.portion,
+                price: dishes.price,
+                description: dishes.description,
+                imageurl: dishes.imageurl,
+            })
+            .from(dishes);
+
+        return z.array(dishSchema).parse(result);
+    });
+    if (error) throw error;
+    return result;
 }
 
 /**
- * Finds a dish by ID.
- * @param {number} id
- * @returns {Promise<Dish|null>}
+ * Creates a new dish.
+ * @param {string} name - The name.
+ * @param {number} portion - The portion of dish.
+ * @param {number} price - The price of dish.
+ * @param {string} description - The description.
+ * @param {string} imageurl - The image.
+ * @returns {Promise<Dish>} The new dish.
+ */
+export async function createMenuItem(name, portion, price, description, imageurl) {
+    const { result, error } = await tryCatch(async () => {
+        const result = await db.transaction(async (tx) =>
+            tx
+                .insert(dishes)
+                .values({
+                    name,
+                    portion,
+                    price,
+                    description,
+                    imageurl,
+                })
+                .returning({
+                    id: dishes.id,
+                    name: dishes.name,
+                    portion: dishes.portion,
+                    price: dishes.price,
+                    description: dishes.description,
+                    imageurl: dishes.imageurl,
+                })
+        );
+
+        return dishSchema.parse(result[0]);
+    });
+    if (error) throw error;
+    return result;
+}
+
+/**
+ * Deletes a dish by its ID.
+ * @param {number} id - The ID of dish.
+ * @returns {Promise<void>}
+ */
+export async function deleteMenuItemById(id) {
+    const { result, error } = await tryCatch(async () => {
+        await db.transaction(async (tx) => tx.delete(dishes).where(eq(dishes.id, id)));
+    });
+    if (error) throw error;
+    return result;
+}
+
+/**
+ * Changes info about dish.
+ * @param {number} id - The ID of dish.
+ * @param {string} name - The name.
+ * @param {number} portion - The portion of dish.
+ * @param {number} price - The price of dish.
+ * @param {string} description - The description.
+ * @param {string} imageurl - The image.
+ * @returns {Promise<Dish|null>} The updated dish.
+ */
+export async function updateMenuItemById(id, name, portion, price, description, imageurl) {
+    const { result, error } = await tryCatch(async () => {
+        const result = await db.transaction(async (tx) =>
+            tx
+                .update(dishes)
+                .set({
+                    name,
+                    portion,
+                    price,
+                    description,
+                    imageurl,
+                })
+                .where(eq(dishes.id, id))
+                .returning({
+                    id: dishes.id,
+                    name: dishes.name,
+                    portion: dishes.portion,
+                    price: dishes.price,
+                    description: dishes.description,
+                    imageurl: dishes.imageurl,
+                })
+        );
+
+        if (result.length === 0) return null;
+        return dishSchema.parse(result[0]);
+    });
+    if (error) throw error;
+    return result;
+}
+
+/**
+ * Finds a dish by id.
+ * @param {number} id - The ID of dish.
+ * @returns {Promise<Dish|null>} The dish.
  */
 export async function findMenuItemById(id) {
-  const { result, error } = await tryCatch(() =>
-    db.select().from(dishes).where(eq(dishes.id, id))
-  );
-  if (error != null) throw error;
-  const dish = result[0];
-  return dish ? dishModel.schema.parse(dish) : null;
+    const { result, error } = await tryCatch(async () => {
+        const result = await db
+            .select({
+                id: dishes.id,
+                name: dishes.name,
+                portion: dishes.portion,
+                price: dishes.price,
+                description: dishes.description,
+                imageurl: dishes.imageurl,
+            })
+            .from(dishes)
+            .where(eq(dishes.id, id))
+            .limit(1);
+
+        if (result.length === 0) return null;
+        return dishSchema.parse(result[0]);
+    });
+    if (error) throw error;
+    return result;
 }
 
 /**
  * Finds a dish by name.
- * @param {string} name
- * @returns {Promise<Dish|null>}
+ * @param {string} name - The name of dish.
+ * @returns {Promise<Dish|null>} The dish.
  */
 export async function findMenuItemByName(name) {
-  const { result, error } = await tryCatch(() =>
-    db.select().from(dishes).where(eq(dishes.name, name))
-  );
-  if (error != null) throw error;
-  return result[0] ? dishModel.schema.parse(result[0]) : null;
-}
+    const { result, error } = await tryCatch(async () => {
+        const result = await db
+            .select({
+                id: dishes.id,
+                name: dishes.name,
+                portion: dishes.portion,
+                price: dishes.price,
+                description: dishes.description,
+                imageurl: dishes.imageurl,
+            })
+            .from(dishes)
+            .where(eq(dishes.name, name))
+            .limit(1);
 
-/**
- * Creates a new menu item.
- * @param {Omit<Dish, "id">} item
- * @returns {Promise<Dish>}
- */
-export async function createMenuItem(item) {
-  const parsed = dishModel.schema.omit({ id: true }).parse(item);
-  const { result, error } = await tryCatch(() =>
-    db.insert(dishes).values(parsed).returning()
-  );
-  if (error != null) throw error;
-  return dishModel.schema.parse(result[0]);
-}
-
-/**
- * Updates a menu item.
- * @param {number} id
- * @param {Partial<Omit<Dish, "id">>} updates
- * @returns {Promise<Dish>}
- */
-export async function updateMenuItemById(id, updates) {
-  const { result, error } = await tryCatch(() =>
-    db.update(dishes).set(updates).where(eq(dishes.id, id)).returning()
-  );
-  if (error != null) throw error;
-  return dishModel.schema.parse(result[0]);
-}
-
-/**
- * Deletes a menu item by ID.
- * @param {number} id
- * @returns {Promise<void>}
- */
-export async function deleteMenuItemById(id) {
-  const { error } = await tryCatch(() =>
-    db.delete(dishes).where(eq(dishes.id, id))
-  );
-  if (error != null) throw error;
-}
-
-/**
- * Gets all orders. Returns raw rows for now.
- */
-export async function getAllOrders() {
-  const { result, error } = await tryCatch(() => db.select().from(orders));
-  if (error != null) throw error;
-  return result;
+        if (result.length === 0) return null;
+        return dishSchema.parse(result[0]);
+    });
+    if (error) throw error;
+    return result;
 }
 
 /**
  * Creates a new order.
- * @param {number} userId
- * @param {Record<number, number>} items
- * @param {string} name
- * @param {string} address
- * @param {string} phone
- * @returns {Promise<any>} Order row
+ * @param {number} userId - The ID of the user.
+ * @param {Map<number, number> | Record<number, number>} items - The items in the order (dish ID to quantity).
+ * @param {string} name - The customer's name.
+ * @param {string} address - The delivery address.
+ * @param {string} phone - The customer's phone number.
+ * @returns {Promise<Order>} The created order.
  */
 export async function createOrder(userId, items, name, address, phone) {
-  const { result: orderRes, error: orderErr } = await tryCatch(() =>
-    db.insert(orders).values({
-      userId,
-      name,
-      address,
-      phone,
-      status: "pending",
-    }).returning()
-  );
-  if (orderErr != null) throw orderErr;
+    const { result, error } = await tryCatch(async () => {
+        const itemsArray =
+            items instanceof Map
+                ? Array.from(items.entries())
+                : Object.entries(items).map(([id, qty]) => [Number(id), qty]);
+        const validatedItems = z
+            .array(orderItemSchema)
+            .parse(itemsArray.map(([id, quantity]) => ({ id, quantity })));
+        const validatedName = z
+            .string()
+            .min(1, { message: "Name is required." })
+            .parse(name);
+        const validatedAddress = z
+            .string()
+            .min(1, { message: "Address is required." })
+            .parse(address);
+        const validatedPhone = z
+            .string()
+            .regex(/^\+?\d{10,15}$/, { message: "Invalid phone number." })
+            .parse(phone);
 
-  const order = orderRes[0];
-  const itemValues = Object.entries(items).map(([dishId, quantity]) => ({
-    orderId: order.id,
-    dishId: Number(dishId),
-    quantity,
-  }));
+        return await db.transaction(async (tx) => {
+            const orderResult = await tx
+                .insert(orders)
+                .values({
+                    userId,
+                    status: "processing",
+                    name: validatedName,
+                    address: validatedAddress,
+                    phone: validatedPhone,
+                })
+                .returning({
+                    id: orders.id,
+                    userId: orders.userId,
+                    status: orders.status,
+                    name: orders.name,
+                    address: orders.address,
+                    phone: orders.phone,
+                    createdAt: orders.createdAt,
+                });
 
-  const { error: itemsErr } = await tryCatch(() =>
-    db.insert(orderItems).values(itemValues)
-  );
-  if (itemsErr != null) throw itemsErr;
+            const order = orderResult[0];
 
-  return order;
+            for (const item of validatedItems) {
+                await tx.insert(orderItems).values({
+                    orderId: order.id,
+                    dishId: item.id,
+                    quantity: item.quantity,
+                });
+            }
+
+            const itemsResult = await tx
+                .select({
+                    id: orderItems.dishId,
+                    quantity: orderItems.quantity,
+                })
+                .from(orderItems)
+                .where(eq(orderItems.orderId, order.id));
+
+            return orderSchema.parse({
+                id: order.id,
+                userId: order.userId,
+                items: itemsResult,
+                status: order.status,
+                name: order.name,
+                address: order.address,
+                phone: order.phone,
+                createdAt: order.createdAt,
+            });
+        });
+    });
+    if (error) throw error;
+    return result;
 }
 
 /**
- * Finds an order by ID.
- * @param {number} id
- * @returns {Promise<any|null>}
+ * Returns all orders
+ * @returns {Promise<Order[]>} Orders themselves.
+ */
+export async function getAllOrders() {
+    const { result, error } = await tryCatch(async () => {
+        const ordersResult = await db
+            .select({
+                id: orders.id,
+                userId: orders.userId,
+                status: orders.status,
+                name: orders.name,
+                address: orders.address,
+                phone: orders.phone,
+                createdAt: orders.createdAt,
+            })
+            .from(orders);
+
+        const ordersData = [];
+        for (const order of ordersResult) {
+            const itemsResult = await db
+                .select({
+                    id: orderItems.dishId,
+                    quantity: orderItems.quantity,
+                })
+                .from(orderItems)
+                .where(eq(orderItems.orderId, order.id));
+
+            ordersData.push(
+                orderSchema.parse({
+                    id: order.id,
+                    userId: order.userId,
+                    items: itemsResult,
+                    status: order.status,
+                    name: order.name,
+                    address: order.address,
+                    phone: order.phone,
+                    createdAt: order.createdAt.toISOString(),
+                })
+            );
+        }
+        return ordersData;
+    });
+    if (error) throw error;
+    return result;
+}
+
+/**
+ * Finds an order by its ID.
+ * @param {number} id - The ID of the order.
+ * @returns {Promise<Order|null>} The found order or null.
  */
 export async function findOrderById(id) {
-  const { result, error } = await tryCatch(() =>
-    db.select().from(orders).where(eq(orders.id, id))
-  );
-  if (error != null) throw error;
-  return result[0] || null;
+    const { result, error } = await tryCatch(async () => {
+        const orderResult = await db
+            .select({
+                id: orders.id,
+                userId: orders.userId,
+                status: orders.status,
+                name: orders.name,
+                address: orders.address,
+                phone: orders.phone,
+                createdAt: orders.createdAt,
+            })
+            .from(orders)
+            .where(eq(orders.id, id))
+            .limit(1);
+
+        if (orderResult.length === 0) return null;
+        const order = orderResult[0];
+
+        const itemsResult = await db
+            .select({
+                id: orderItems.dishId,
+                quantity: orderItems.quantity,
+            })
+            .from(orderItems)
+            .where(eq(orderItems.orderId, order.id));
+
+        return orderSchema.parse({
+            id: order.id,
+            userId: order.userId,
+            items: itemsResult,
+            status: order.status,
+            name: order.name,
+            address: order.address,
+            phone: order.phone,
+            createdAt: order.createdAt.toISOString(),
+        });
+    });
+    if (error) throw error;
+    return result;
 }
 
 /**
- * Gets orders for a specific user.
- * @param {number} userId
- * @returns {Promise<any[]>}
+ * Finds all orders for a user.
+ * @param {number} userId - The ID of the user.
+ * @returns {Promise<Order[]>} The user's orders.
  */
 export async function findOrdersByUserId(userId) {
-  const { result, error } = await tryCatch(() =>
-    db.select().from(orders).where(eq(orders.userId, userId))
-  );
-  if (error != null) throw error;
-  return result;
+    const { result, error } = await tryCatch(async () => {
+        const ordersResult = await db
+            .select({
+                id: orders.id,
+                userId: orders.userId,
+                status: orders.status,
+                name: orders.name,
+                address: orders.address,
+                phone: orders.phone,
+                createdAt: orders.createdAt,
+            })
+            .from(orders)
+            .where(eq(orders.userId, userId));
+
+        const ordersData = [];
+        for (const order of ordersResult) {
+            const itemsResult = await db
+                .select({
+                    id: orderItems.dishId,
+                    quantity: orderItems.quantity,
+                })
+                .from(orderItems)
+                .where(eq(orderItems.orderId, order.id));
+
+            ordersData.push(
+                orderSchema.parse({
+                    id: order.id,
+                    userId: order.userId,
+                    items: itemsResult,
+                    status: order.status,
+                    name: order.name,
+                    address: order.address,
+                    phone: order.phone,
+                    createdAt: order.createdAt.toISOString(),
+                })
+            );
+        }
+        return ordersData;
+    });
+    if (error) throw error;
+    return result;
 }
 
 /**
- * Updates the status of an order.
- * @param {number} id
- * @param {string} status
- * @returns {Promise<any>}
+ * Updates an existing order's status.
+ * @param {number} id - The ID of the order.
+ * @param {OrderStatus} status - The updated status.
+ * @returns {Promise<Order|null>} The updated order or null if not found.
  */
 export async function updateOrderStatusById(id, status) {
-  const { result, error } = await tryCatch(() =>
-    db.update(orders).set({ status }).where(eq(orders.id, id)).returning()
-  );
-  if (error != null) throw error;
-  return result[0];
+    const { result, error } = await tryCatch(async () => {
+        const validatedStatus = statusSchema.parse(status);
+        const orderResult = await db.transaction(async (tx) =>
+            tx
+                .update(orders)
+                .set({ status: validatedStatus })
+                .where(eq(orders.id, id))
+                .returning({
+                    id: orders.id,
+                    userId: orders.userId,
+                    status: orders.status,
+                    name: orders.name,
+                    address: orders.address,
+                    phone: orders.phone,
+                    createdAt: orders.createdAt,
+                })
+        );
+
+        if (orderResult.length === 0) return null;
+        const order = orderResult[0];
+
+        const itemsResult = await db
+            .select({
+                id: orderItems.dishId,
+                quantity: orderItems.quantity,
+            })
+            .from(orderItems)
+            .where(eq(orderItems.orderId, order.id));
+
+        return orderSchema.parse({
+            id: order.id,
+            userId: order.userId,
+            items: itemsResult,
+            status: order.status,
+            name: order.name,
+            address: order.address,
+            phone: order.phone,
+            createdAt: order.createdAt.toISOString(),
+        });
+    });
+    if (error) throw error;
+    return result;
 }
 
 export default {
-  findUserByUsername,
-  createUser,
-  getMenu,
-  findMenuItemById,
-  findMenuItemByName,
-  createMenuItem,
-  updateMenuItemById,
-  deleteMenuItemById,
-  getAllOrders,
-  createOrder,
-  findOrderById,
-  findOrdersByUserId,
-  updateOrderStatusById,
+    findUserByUsername,
+    findUserById,
+    createUser,
+    getMenu,
+    createMenuItem,
+    deleteMenuItemById,
+    updateMenuItemById,
+    findMenuItemById,
+    findMenuItemByName,
+    getAllOrders,
+    createOrder,
+    findOrderById,
+    findOrdersByUserId,
+    updateOrderStatusById,
 };
