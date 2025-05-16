@@ -3,7 +3,6 @@ import { z } from "zod";
 /** @typedef {z.infer<typeof schema>} Order */
 
 export const statusSchema = z.enum([
-    "pending",
     "processing",
     "dispatched",
     "delivered",
