@@ -3,6 +3,7 @@ import { z } from "zod";
 import { tryCatch, asyncHandler } from "#utils.js";
 import { validate } from "#middleware/validate.js";
 import { authorize } from "#middleware/auth.js";
+import { schema as dishSchema } from "#models/dish.js";
 import repo from "#repo.js";
 
 /** @type {express.Router} */
@@ -26,13 +27,7 @@ router.get(
     })
 );
 
-const createItemSchema = z.object({
-    name: z.string(),
-    portion: z.number(),
-    price: z.number(),
-    description: z.string(),
-    imageurl: z.string().url(),
-});
+const createItemSchema = dishSchema.omit({ id: true });
 
 router.post(
     "/item",
@@ -53,7 +48,13 @@ router.post(
         }
 
         const { result: dish, error } = await tryCatch(() =>
-            repo.createMenuItem(item)
+            repo.createMenuItem(
+                item.name,
+                item.portion,
+                item.price,
+                item.description,
+                item.imageurl,
+            )
         );
 
         if (error != null) {
@@ -117,10 +118,17 @@ router.put(
             return;
         }
 
-        /** @type {import("zod").infer<typeof createItemSchema>} */ 
+        /** @type {import("zod").infer<typeof createItemSchema>} */
         const item = req.body;
         const { result: dish, error } = await tryCatch(() =>
-            repo.updateMenuItemById(id, item)
+            repo.updateMenuItemById(
+                id,
+                item.name,
+                item.portion,
+                item.price,
+                item.description,
+                item.imageurl
+            )
         );
 
         if (error != null) {
