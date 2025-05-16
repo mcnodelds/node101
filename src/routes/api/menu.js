@@ -1,5 +1,4 @@
 import express from "express";
-import { z } from "zod";
 import { tryCatch, asyncHandler } from "#utils.js";
 import { validate } from "#middleware/validate.js";
 import { authorize } from "#middleware/auth.js";
@@ -53,7 +52,7 @@ router.post(
                 item.portion,
                 item.price,
                 item.description,
-                item.imageurl,
+                item.imageurl
             )
         );
 

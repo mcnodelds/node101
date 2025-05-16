@@ -9,7 +9,7 @@ import {
     integer,
     timestamp,
     primaryKey,
-    pgEnum
+    pgEnum,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -51,7 +51,9 @@ export const orders = pgTable(
         createdAt: timestamp("created_at", {
             withTimezone: true,
             mode: "date",
-        }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+        })
+            .default(sql`CURRENT_TIMESTAMP`)
+            .notNull(),
     },
     (table) => [
         foreignKey({
@@ -59,7 +61,7 @@ export const orders = pgTable(
             foreignColumns: [users.id],
             name: "orders_user_id_fkey",
         }),
-        check("orders_phone_check", sql`phone ~* '^\\+?[0-9]{10,15}$'::text`)
+        check("orders_phone_check", sql`phone ~* '^\\+?[0-9]{10,15}$'::text`),
     ]
 );
 

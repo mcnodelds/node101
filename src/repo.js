@@ -97,7 +97,7 @@ export async function createUser(username, passwordHash, role, email = null) {
                     email: users.email,
                     role: users.role,
                 })
-        )
+        );
 
         const user = result[0];
         return userSchema.parse(user);
@@ -138,7 +138,13 @@ export async function getMenu() {
  * @param {string} imageurl - The image.
  * @returns {Promise<Dish>} The new dish.
  */
-export async function createMenuItem(name, portion, price, description, imageurl) {
+export async function createMenuItem(
+    name,
+    portion,
+    price,
+    description,
+    imageurl
+) {
     const { result, error } = await tryCatch(async () => {
         const result = await db.transaction(async (tx) =>
             tx
@@ -173,7 +179,9 @@ export async function createMenuItem(name, portion, price, description, imageurl
  */
 export async function deleteMenuItemById(id) {
     const { result, error } = await tryCatch(async () => {
-        await db.transaction(async (tx) => tx.delete(dishes).where(eq(dishes.id, id)));
+        await db.transaction(async (tx) =>
+            tx.delete(dishes).where(eq(dishes.id, id))
+        );
     });
     if (error) throw error;
     return result;
@@ -189,7 +197,14 @@ export async function deleteMenuItemById(id) {
  * @param {string} imageurl - The image.
  * @returns {Promise<Dish|null>} The updated dish.
  */
-export async function updateMenuItemById(id, name, portion, price, description, imageurl) {
+export async function updateMenuItemById(
+    id,
+    name,
+    portion,
+    price,
+    description,
+    imageurl
+) {
     const { result, error } = await tryCatch(async () => {
         const result = await db.transaction(async (tx) =>
             tx
