@@ -10,7 +10,8 @@
         "dev:node": "nodemon --exec 'node --env-file-if-exists=.env.dev src/app.js'",
         "test": "echo \"Error: no test specified\" && exit 1",
         "build:css": "pnpm exec tailwindcss -i ./src/tailwind.css -o ./public/css/style.css",
-        "watch:css": "pnpm exec tailwindcss -i ./src/tailwind.css -o ./public/css/style.css --watch"
+        "watch:css": "pnpm exec tailwindcss -i ./src/tailwind.css -o ./public/css/style.css --watch",
+        "seed": "node src/seed.js"
     },
     "type": "module",
     "imports": {
@@ -25,6 +26,7 @@
         "@types/cookie-parser": "^1.4.8",
         "@types/express": "^5.0.0",
         "@types/express-session": "^1.18.1",
+        "@types/pg": "^8.15.2",
         "daisyui": "^5.0.35",
         "eslint": "^9.19.0",
         "eslint-config-prettier": "^10.0.1",
@@ -45,6 +47,7 @@
         "express": "^4.21.2",
         "express-session": "^1.18.1",
         "jose": "^6.0.11",
+        "pg": "^8.16.0",
         "zod": "^3.24.4"
     },
     "packageManager": "pnpm@10.2.0",
