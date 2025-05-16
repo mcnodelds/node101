@@ -1,0 +1,15 @@
+<% layout("/layouts/base", { title: "Admin Dashboard", claims: it?.claims }) %>
+
+<div class="max-w-4xl mx-auto p-6 min-h-screen">
+    <h1 class="text-3xl font-bold mb-6 text-center font-grenze">Admin Dashboard</h1>
+    <div class="grid gap-6">
+        <div class="card bg-base-100 shadow-xl p-6">
+            <h2 class="text-2xl font-semibold mb-4">Menu Management</h2>
+            <a href="/admin/menu" class="btn btn-primary">View & Edit Menu Items</a>
+        </div>
+        <div class="card bg-base-100 shadow-xl p-6">
+            <h2 class="text-2xl font-semibold mb-4">Order Management</h2>
+            <a href="/admin/orders" class="btn btn-primary">View & Update All Orders</a>
+        </div>
+    </div>
+</div>

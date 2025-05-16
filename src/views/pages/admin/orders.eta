@@ -1,0 +1,98 @@
+<% layout("/layouts/base", { title: "Manage Orders", claims: it?.claims }) %>
+
+<div class="max-w-4xl mx-auto p-6 min-h-screen" x-data="orderManager()" x-init="loadOrders">
+    <h1 class="text-3xl font-bold mb-6 text-center font-grenze">Manage All Orders</h1>
+    
+    <template x-if="loading">
+        <div class="flex justify-center">
+            <span class="loading loading-spinner text-primary"></span>
+        </div>
+    </template>
+
+    <template x-if="!loading && orders.length === 0">
+        <p class="text-center text-gray-500">No orders found.</p>
+    </template>
+
+    <div class="grid gap-4" x-show="!loading">
+        <template x-for="order in orders" :key="order.id">
+            <div class="card bg-base-100 shadow-xl p-4">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        Order #<span x-text="order.id"></span>
+                        <select 
+                            class="select select-bordered" 
+                            @change="updateStatus(order.id, $event.target.value)"
+                            :value="order.status"
+                        >
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="dispatched">Dispatched</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </h2>
+                    <p>
+                        <strong>User ID:</strong> <span x-text="order.userId"></span><br />
+                        <strong>Name:</strong> <span x-text="order.name"></span><br />
+                        <strong>Address:</strong> <span x-text="order.address"></span><br />
+                        <strong>Phone:</strong> <span x-text="order.phone"></span><br />
+                        <strong>Created At:</strong> <span x-text="new Date(order.createdAt).toLocaleString()"></span>
+                    </p>
+                    <div>
+                        <strong>Items:</strong>
+                        <ul class="list-disc list-inside mt-2">
+                            <template x-for="item in order.items" :key="item.id">
+                                <li>
+                                    Item <span x-text="item.id"></span>: <span x-text="item.quantity"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script>
+    function orderManager() {
+        return {
+            orders: [],
+            loading: true,
+            async loadOrders() {
+                this.loading = true;
+                try {
+                    const res = await fetch("/api/orders", {
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+                    if (!res.ok) throw new Error("Failed to fetch orders");
+                    this.orders = await res.json();
+                    console.log(this.orders);
+                } catch (err) {
+                    console.error("Failed to load orders", err);
+                    this.orders = [];
+                } finally {
+                    this.loading = false;
+                }
+            },
+            async updateStatus(orderId, status) {
+                try {
+                    const res = await fetch(`/api/orders/${orderId}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ status })
+                    });
+                    if (!res.ok) throw new Error("Failed to update order status");
+                    const updatedOrder = await res.json();
+                    this.orders = this.orders.map(o => o.id === orderId ? updatedOrder : o);
+                    alert("Order status updated successfully!");
+                } catch (err) {
+                    console.error("Update error:", err);
+                    alert(`Failed to update order status: ${err.message}`);
+                }
+            }
+        };
+    }
+</script>
