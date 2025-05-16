@@ -14,7 +14,17 @@
         <% } %>
         <% if (it?.claims) { %>
             <div class="flex-none">
+                <a href="/orders"><button class="btn btn-ghost">Check your orders</button></a>
+            </div>
+        <% } %>
+        <% if (it?.claims) { %>
+            <div class="flex-none">
                 <a href="/cart"><button class="btn btn-ghost">Go to cart</button></a>
+            </div>
+        <% } %>
+        <% if (it?.claims?.role == "admin") { %>
+            <div class="flex-none">
+                <a href="/admin"><button class="btn btn-ghost">Go to admin panel</button></a>
             </div>
         <% } %>
     </div>
