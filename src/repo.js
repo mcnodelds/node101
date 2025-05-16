@@ -373,6 +373,15 @@ export async function createOrder(userId, items, name, address, phone) {
     orders.push(newOrder);
     return newOrder;
 }
+
+/**
+ * Returns all orders
+ * @returns {Promise<Order[]>} Orders themself.
+ */
+export async function getAllOrders() {
+    return [...orders];
+}
+
 /**
  * Finds an order by its ID.
  * @param {number} id - The ID of the order.
@@ -419,6 +428,8 @@ export default {
     deleteMenuItemById,
     updateMenuItemById,
     findMenuItemById,
+    findMenuItemByName,
+    getAllOrders,
     createOrder,
     findOrderById,
     findOrdersByUserId,

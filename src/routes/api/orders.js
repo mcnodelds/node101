@@ -21,6 +21,15 @@ const createOrderSchema = z.object({
         .regex(/^\+?\d{10,15}$/, { message: "Invalid phone number." }),
 });
 
+router.get(
+    "/",
+    authorize({ roleWhitelist: ["admin"] }),
+    asyncHandler(async (_req, res) => {
+        const orders = await repo.getAllOrders();
+        res.status(200).json(orders);
+    })
+);
+
 router.post(
     "/",
     validate(createOrderSchema),
