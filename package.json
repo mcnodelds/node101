@@ -7,7 +7,7 @@
         "hello": "node src/world.js",
         "start": "node --env-file-if-exists=.env.prod src/app.js",
         "dev": "pnpm run dev:node & pnpm run watch:css",
-        "dev:node": "nodemon --exec 'node --env-file-if-exists=.env.dev src/app.js'",
+        "dev:node": "nodemon --exec node --env-file-if-exists=.env.dev src/app.js",
         "test": "echo \"Error: no test specified\" && exit 1",
         "build:css": "pnpm exec tailwindcss -i ./src/tailwind.css -o ./public/css/style.css",
         "watch:css": "pnpm exec tailwindcss -i ./src/tailwind.css -o ./public/css/style.css --watch",
